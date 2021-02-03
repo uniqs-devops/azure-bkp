@@ -1,0 +1,23 @@
+The packages for the DDBOOST feature and AVAMAR Client cannot be downloaded from this repositories.
+These packages are
+## Avamar version 19.2
+AvamarClient-linux-sles11-x86_64-19.2.100-155.rpm 
+DDBoostFS-7.2.0.5-654559.rhel.x86_64.rpm
+
+They can be obtained from DellTechnologies support and download sites
+
+NOTE
+The packages HAVE TO BE PLACED in this path
+$REPO_HOME/src/packages/DockerEmbedded/19.2
+for the scripts that build the container work
+
+## Avamar version 19.3
+AvamarClient-linux-sles11-x86_64-19.3.100-149.rpm  
+DDBoostFS-7.2.0.5-654559.rhel.x86_64.rpm
+
+They can be obtained from DellTechnologies support and download sites
+
+NOTE
+The packages HAVE TO BE PLACED in this path
+$REPO_HOME/src/packages/DockerEmbedded/19.3
+for the scripts that build the container work

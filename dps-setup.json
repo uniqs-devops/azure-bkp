@@ -1,0 +1,66 @@
+{
+  "cloudProvider": "azure",
+  "dockerType": "postgresql",
+  "dockerTypeName": "PG",
+  "keyVaultName": "keyvault1414",
+  "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
+  "avamar": {
+    "useAvamar": "YES",
+    "avamarServerName": "avedemo01.internal.cloudapp.net",
+	"avamarDomain": "clients",
+	"installDir": "dockerclient",
+	"avamarVersion": "19.3"
+
+  },
+  "datadomain": {
+    "datadomainServerName": "ddvedemo01.internal.cloudapp.net",
+	"mountType": "DDBoostFS",
+	"RootBackupDir": "Backup"
+  },
+  "ddboosfs": {
+    "storageUnit": "st-ddboostfs"
+  },
+  "container": {
+    "containerName": "dockerpg-01"
+  },
+  "azureResources": [
+    {
+      "type": "PG",
+      "resourceType": "Microsoft.DBforPostgreSQL/servers"
+    },
+    {
+      "type": "PG",
+      "resourceType": null
+    },
+    {
+      "type": "PG",
+      "resourceType": null
+    }
+  ],  
+  "backupTags": [
+    {
+      "type": "user",
+      "value": "bck_user"
+    },
+    {
+      "type": "port",
+      "value": "bck_port"
+    },
+    {
+      "type": "server",
+      "value": "bck_server"
+    },
+    {
+      "type": "database",
+      "value": "bck_database"
+    },
+    {
+      "type": "task",
+      "value": "bck_task"
+    },
+    {
+      "type": "secret",
+      "value": "bck_secret"
+    }
+  ]
+}
