@@ -1,0 +1,54 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "serverName": {
+            "value": "postgres888"
+        },
+        "location": {
+            "value": "eastus"
+        },
+        "skuName": {
+            "value": "B_Gen5_2"
+        },
+        "skuTier": {
+            "value": "Basic"
+        },
+        "skuCapacity": {
+            "value": 2
+        },
+        "skuFamily": {
+            "value": "Gen5"
+        },
+        "skuSizeMB": {
+            "value": 51200
+        },
+        "backupRetentionDays": {
+            "value": 7
+        },
+        "geoRedundantBackup": {
+            "value": "Disabled"
+        },
+        "storageAutoGrow": {
+            "value": "Disabled"
+        },
+        "tags": {
+            "value": {}
+        },
+        "infrastructureEncryption": {
+            "value": "Disabled"
+        },
+        "administratorLogin": {
+            "value": "dba"
+        },
+        "administratorLoginPassword": {
+            "value": "Navarr0-2021"
+        },
+        "previewFeature": {
+            "value": ""
+        },
+        "version": {
+            "value": "10"
+        }
+    }
+}
