@@ -117,8 +117,8 @@ do
 		fi
 		pass=$(echo $response | python3 -c 'import sys, json; print (json.load(sys.stdin)["value"])')		
 		for db in ${dbs[@]}; do 
-			echo PGPASSWORD=******** pg_dump -Fc -v --host=$server --username=$username --dbname=$db -f ${BackupDir}/$server.$db.$task.$(date +%Y%m%d%H%M%S).dump
-			PGPASSWORD=${pass} pg_dump -Fc -v --host=$server --username=$username --dbname=$db -f ${BackupDir}/$server.$db.$task.$(date +%Y%m%d%H%M%S).dump
+			echo PGPASSWORD=******** pg_dump -Fc -v --host=$server --username=$username@$server --dbname=$db -f ${BackupDir}/$server.$db.$task.$(date +%Y%m%d%H%M%S).dump
+			PGPASSWORD=${pass} pg_dump -Fc -v --host=$server --username=$username@$server --dbname=$db -f ${BackupDir}/$server.$db.$task.$(date +%Y%m%d%H%M%S).dump
 			if [ "$?" != "0" ] ; then
 				echo "******************** ERROR 009: Wrong Data in Config file POSTGRES, EXIT *********************"
 				ERROR=9
