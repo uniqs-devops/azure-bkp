@@ -4,7 +4,7 @@
 
 version="1.0"
 
-ConfigDir=/DUMMYINSTALLDIR
+ConfigDir=/dockerclient
 SERVICE_TYPE=`cat $ConfigDir/dps-setup.json  | jq -r '.dockerType'`
 KeyVault=`cat $ConfigDir/dps-setup.json  | jq -r '.keyVaultName'`
 LogDir=$ConfigDir/var
@@ -109,6 +109,7 @@ do
 		access_token=$(echo $response | python3 -c 'import sys, json; print (json.load(sys.stdin)["access_token"])')
 		echo !!!!! Processing value from Keyvault !!!!!
 		response=$(curl https://${KeyVault}.vault.azure.net/secrets/$secret?api-version=2016-10-01 -s -H "Authorization: Bearer ${access_token}")
+		response=$(curl https://keyvaultforpostgres.vault.azure.net/secrets/secret778?api-version=2016-10-01 -s -H "Authorization: Bearer ${access_token}")
 		if [ ${response:2:5} == "error" ]; then
 			echo "****************************** ERROR 002 Obtaining key value from KeyVault ******************************"
 			ERROR=2
@@ -116,7 +117,7 @@ do
 		fi
 		pass=$(echo $response | python3 -c 'import sys, json; print (json.load(sys.stdin)["value"])')		
 		for db in ${dbs[@]}; do 
-			echo PGPASSWORD=******** pg_dump -Fc -v --host=$server --username=$username@$server --dbname=$db -f ${BackupDir}/$server.$db.$task.$(date +%Y%m%d%H%M%S).dump
+						echo PGPASSWORD=******** pg_dump -Fc -v --host=$server --username=$username@$server --dbname=$db -f ${BackupDir}/$server.$db.$task.$(date +%Y%m%d%H%M%S).dump
 			PGPASSWORD=${pass} pg_dump -Fc -v --host=$server --username=$username@$server --dbname=$db -f ${BackupDir}/$server.$db.$task.$(date +%Y%m%d%H%M%S).dump
 			if [ "$?" != "0" ] ; then
 				echo "******************** ERROR 009: Wrong Data in Config file POSTGRES, EXIT *********************"

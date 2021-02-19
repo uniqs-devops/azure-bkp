@@ -15,7 +15,7 @@ TENANID=`cat $ConfigDir/dps-setup.json  | jq -r '.tenantId'`
 MOUNTTYPE=`cat $ConfigDir/dps-setup.json  | jq -r '.datadomain.mountType'`
 
 # AZ Login
-az login --service-principal -u http://PaaSBackup --password $ConfigDir/azurelogin.pem --tenant $TENANID
+###az login --service-principal -u http://PaaSBackup --password $ConfigDir/azurelogin.pem --tenant $TENANID
 
 if [ ! -d $RootBackupDir ]; then mkdir mkdir ${RootBackupDir}; fi
 
@@ -46,6 +46,7 @@ echo
 echo "*********************************** SEARCHING cloud resources **************************************"
 echo
 
+set -x
 cat ${ConfigDir}/secret.list | while read linea
 do
         set -a $linea " "
@@ -63,6 +64,7 @@ else
 	echo "*********************************** FINISHED swobackup.sh ver ${version} ************************************"
 fi
 # Logout
-az logout
+###az logout
+
 
 
