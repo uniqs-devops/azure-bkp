@@ -2,26 +2,28 @@
   "cloudProvider": "azure",
   "dockerType": "postgresql",
   "dockerTypeName": "PG",
-  "keyVaultName": "keyvault1414",
-  "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
+  "keyVaultName": "cibd1weuakvglocolcrit001",
+  "tenantId": "35595a02-4d6d-44ac-99e1-f9ab4cd872db",
+  "resourceGroup": "cibd1weursgglocolcrit001",
+  "useTags": "NO",
+  "useFQDN": "NO",
   "avamar": {
     "useAvamar": "YES",
-    "avamarServerName": "avedemo01.internal.cloudapp.net",
-	"avamarDomain": "clients",
-	"installDir": "dockerclient",
-	"avamarVersion": "19.3"
-
+    "avamarServerName": "cibp1weuaval001.shared.azure.scib.gs.corp",
+        "avamarDomain": "clients",
+        "installDir": "dockerclient",
+        "avamarVersion": "19.3"
   },
   "datadomain": {
-    "datadomainServerName": "ddvedemo01.internal.cloudapp.net",
-	"mountType": "DDBoostFS",
-	"RootBackupDir": "Backup"
+    "datadomainServerName": "cibp1weuaval003.shared.azure.scib.gs.corp",
+        "mountType": "ddboostfs",
+        "RootBackupDir": "Backup"
   },
   "ddboosfs": {
-    "storageUnit": "st-ddboostfs"
+    "storageUnit": "PaaSbackup"
   },
   "container": {
-    "containerName": "dockerpg-01"
+    "containerName": "dockerpg-01.shared.azure.scib.gs.corp"
   },
   "azureResources": [
     {
@@ -36,7 +38,7 @@
       "type": "PG",
       "resourceType": null
     }
-  ],  
+  ],
   "backupTags": [
     {
       "type": "user",
@@ -45,10 +47,6 @@
     {
       "type": "port",
       "value": "bck_port"
-    },
-    {
-      "type": "server",
-      "value": "bck_server"
     },
     {
       "type": "database",
@@ -61,6 +59,28 @@
     {
       "type": "secret",
       "value": "bck_secret"
+    }
+  ],
+    "fixValues": [
+    {
+      "type": "user",
+      "value": "avamar-backup"
+    },
+    {
+      "type": "port",
+      "value": "5432"
+    },
+    {
+      "type": "database",
+      "value": "*"
+    },
+    {
+      "type": "task",
+      "value": "postgresql"
+    },
+    {
+      "type": "secret",
+      "value": "avamar-backup-cibd1weuapsglocolcrit001"
     }
   ]
 }

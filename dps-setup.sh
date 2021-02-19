@@ -25,6 +25,8 @@ DOCKERTYPE=`cat dps-setup.json  | jq -r '.dockerType'`
 USEAVAMAR=`cat dps-setup.json  | jq -r '.avamar.useAvamar'`
 MOUNTTYPE=`cat dps-setup.json  | jq -r '.datadomain.mountType'`
 INSTALLDIR=`cat dps-setup.json  | jq -r '.avamar.installDir'`
+DockerfileName=$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
+if [ $USEAVAMAR = "YES" ]; then DockerfileName=avamar.$AVEVERSION.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile; fi
 }
 function setup {
 # Install packeges needed by DCI
@@ -34,51 +36,59 @@ exit
 }
 
 function prebuild {
-    environment
-    # .avagent
-    echo "--hostname="$CONTAINER_NAME> src/avamar/.avagent
-    # Docker container
-    cp avamar-PG-Azure-template.dockerfile avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER.dockerfile
+    # Get environment
+	environment
+    # Docker container baseline
+    cp Azure-template.dockerfile temp.dockerfile
     #  
     echo "#/bin/bash" > src/avamar/setup.sh
     echo "mkdir -p /$RootBackupDir" >> src/avamar/setup.sh
-    if [ $MOUNTTYPE = "DDBoostFS" ]; then
-	# Ddboostfs & Lockbox
-	  sudo /opt/emc/boostfs/bin/boostfs lockbox add-hosts $CONTAINER_NAME;  cp /opt/emc/boostfs/lockbox/boostfs.lockbox  src/ddboostfs/boostfs.lockbox
-	  echo "#/opt/emc/boostfs/bin/boostfs mount -d $DD_SERVER -s $STORAGE_UNIT /mnt/$RootBackupDir" >> src/avamar/setup.sh
-	  echo "echo '$DD_SERVER:/$STORAGE_UNIT /mnt/$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/avamar/setup.sh
-	  cat avamar-PG-Azure-template-DDBoostFS.dockerfile >> avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER.dockerfile
-    fi
-    if [ $USEAVAMAR = "YES" ]; then
-    # Avamar
+	if [ $USEAVAMAR = "YES" ]; then
+	  DockerfileName=avamar.$AVEVERSION.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
+	  # .avagent
+      echo "--hostname="$CONTAINER_NAME> src/avamar/.avagent
+      # Avamar
 	  echo "/$INSTALLDIR/bin/avagent.bin --init --daemon=false --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc/ --mcsaddr=$AVAMAR_SERVER --dpndomain=/$AVAMAR_DOMAIN --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
 	  echo "/$INSTALLDIR/bin/avagent.bin --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
-          cat avamar-PG-Azure-template-Avamar.dockerfile >> avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER.dockerfile
-	  sed -i -e "s/DUMMYVERSION/$AVEVERSION/g" avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER.dockerfile
+      cat Azure-template-Avamar.dockerfile >> temp.dockerfile
     else 
-	  echo "echo '00 09 * * 1-5 $INSTALLDIR/backup-postgreSQL.sh' >> /var/spool/cron/root" >> src/avamar/setup.sh
+	  DockerfileName=$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
+	  echo "echo '00 09 * * 1-5 /$INSTALLDIR/etc/scripts/backup-postgreSQL.sh' >> /var/spool/cron/root" >> src/avamar/setup.sh
     fi
-    echo "COPY src/avamar/setup.sh /$INSTALLDIR" >> avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER.dockerfile
-    echo "RUN chmod 755 /$INSTALLDIR/setup.sh" >> avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER.dockerfile
-    echo "RUN /$INSTALLDIR/setup.sh" >> avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER.dockerfile
-    echo "# Cleanup /tmp folder, agent start  and Configuration persist" >> avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER.dockerfile
-    echo "RUN rm -f /tmp/*.rpm" >> avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER.dockerfile
-# About ENTRYPOINTs
+	if [ $DOCKERTYPE = "postgresql" ]; then cat Azure-template-PostgreSQL.dockerfile >> temp.dockerfile; fi
+	if [ $DOCKERTYPE = "mongodb" ] || [ $DOCKERTYPE = "cosmodb" ]; then cat Azure-template-MongoDB.dockerfile >> temp.dockerfile; fi
+    if [ $MOUNTTYPE = "ddboostfs" ]; then
+	# Ddboostfs & Lockbox
+	  sudo /opt/emc/boostfs/bin/boostfs lockbox add-hosts $CONTAINER_NAME;  cp /opt/emc/boostfs/lockbox/boostfs.lockbox  src/ddboostfs/boostfs.lockbox
+	  echo "#/opt/emc/boostfs/bin/boostfs mount -d $DD_SERVER -s $STORAGE_UNIT /$RootBackupDir" >> src/avamar/setup.sh
+	  echo "echo '$DD_SERVER:/$STORAGE_UNIT /$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/avamar/setup.sh
+	  cat Azure-template-DDBoostFS.dockerfile >> temp.dockerfile
+	fi
+    echo "COPY src/avamar/setup.sh /$INSTALLDIR" >> temp.dockerfile
+    echo "RUN chmod 755 /$INSTALLDIR/setup.sh" >> temp.dockerfile
+    echo "RUN /$INSTALLDIR/setup.sh" >> temp.dockerfile
+    echo "# Cleanup /tmp folder, agent start  and Configuration persist" >> temp.dockerfile
+    echo "RUN rm -f /tmp/*.rpm" >> temp.dockerfile
+    # About ENTRYPOINTs
     if [ $USEAVAMAR = "YES" ]; then
-    	echo "ENTRYPOINT mount -a &&  [ -f /etc/init.d/avagent ] && /etc/init.d/avagent start && /bin/bash" >> avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER.dockerfile
+    	echo "ENTRYPOINT mount -a &&  [ -f /etc/init.d/avagent ] && /etc/init.d/avagent start && /bin/bash" >> temp.dockerfile
     else
-    	echo "ENTRYPOINT mount -a && /bin/bash" >> avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER.dockerfile
+    	echo "ENTRYPOINT mount -a && /bin/bash" >> temp.dockerfile
     fi   
-    sed -i -e "s/DUMMYINSTALLDIR/$INSTALLDIR/g" avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER.dockerfile
+    sed -i -e "s/DUMMYINSTALLDIR/$INSTALLDIR/g" temp.dockerfile
+	sed -i -e "s/DUMMYVERSION/$AVEVERSION/g" temp.dockerfile
+	sed -i -e "s/DUMMYINSTALLDIR/$INSTALLDIR/g" src/avamar/backup-postgreSQL.sh
     # azure
     echo $RESOURCES > src/avamar/resources
+	# Dockerfile Name
+	mv temp.dockerfile $DockerfileName
 exit
 }
 
 function build {
 # Docker
     environment
-    sudo docker build -t avamar-$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER:1.0 -f avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER.dockerfile . --network host
+    sudo docker build -t $DockerfileName:1.0 -f $DockerfileName . --network host
 exit
 }
 
@@ -152,3 +162,4 @@ while [ "$1" != "" ]; do
                                 exit  1
     esac
 done
+

@@ -1,35 +1,5 @@
 This repository contains code examples for setup PostgreSQL PaaS backup in Azure.
 
-Repo layout:
-
-```
-├── avamar-PG-Azure-template.dockerfile
-├── avamar-PG-Azure-template-Avamar.dockerfile
-├── avamar-PG-Azure-template-DDBoostFS.dockerfile
-├── dps-setup.json
-├── dps-setup.sh
-├── README1st.md (This file)
-├── README-dockerfile.md
-├── README-dps-setup.json.md
-├── README-dps-setup.md
-└── src
-    ├── avamar
-	│   ├── .avagent
-    │   ├── backup-postgreSQL.sh
-    ├── azure
-    │   └── azure-cli.repo
-    │   └── azurelogin.pem
-    ├── ddboostfs
-    │   └── boostfs.lockbox
-    └── packages
-        └── DockerEmbebed
-		    └── 19.1
-            └── 19.2
-                ├── AvamarClient-linux-sles11-x86_64-19.2.100-155.rpm
-                ├── DDBoostFS-7.0.0.0-633922.rhel.x86_64.rpm
-                └── pgdg-redhat-repo-latest.noarch.rpm
-			└── 19.3
-			└── postgresql
 
 ```
 How to deploy a DCI (Deploy Control Instance) (*)
@@ -91,7 +61,7 @@ Deployment sequence (from DCI):
    
    Run ```az ad sp create-for-rbac``` to create cert (.pem) file. Please run before 'az login' to setup account if you are no logged in yet.
    ```	
-   - az ad sp create-for-rbac --name 'PaaSBackup' --create-cert; mv ~/*.pem src/azure/azurelogin.pem
+   - az ad sp create-for-rbac --name 'PaaSBackup' --create-cert; mv ~/*.pem /home/dps/uniqs-dps/src/azure/azurelogin.pem
    ```
 
 2) Run ```dps-setup.sh -p``` to prebuild dockerfile.
@@ -104,16 +74,4 @@ Deployment sequence (from DCI):
    See file ``` README dps-setup.json ``` for more details.
    
 6) Configure an Avamar policy backup as usual.
-
-```
-==========================================================================================================================================
-Reference resources
-
-- Video demo https://youtu.be/isaHN4K6Quk 
-- Code repository https://github.com/uniqs-devops/bkp-proxy.git 
-- Leveraging Avamar for File Level Backup of apps running on Kubernetes https://github.com/cn-dp/K8s-Avamar 
-- Data Protection: Avamar, NetWorker, Data Domain, RecoverPoint, PowerProtect, CSM https://nsrd.info/blog/2019/03/05/proof-of-concept-docker-with-boostfs/ 
-
-==========================================================================================================================================
- 
 

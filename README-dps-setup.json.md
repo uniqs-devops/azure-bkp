@@ -8,6 +8,12 @@
 ``` Azure Kay Vault name```
 - tenantId
 ``` Tenantid```
+- resourceGroup
+``` resurce group name or all to all RGs```
+- useTags
+``` tags or default values using fixValues```
+- useFQDN
+``` FQDN or IP through nslookup```
 - useAvamar
 ``` Use avamar to store backup data```
 - avamarServerName and datadomainServerName
@@ -17,7 +23,7 @@
 - avamarVersion
 ``` Avamar version```
 - mountType
-``` DDBoostFS or NFS```
+``` ddboostfs or nfs```
 - RootBackupDir
 ``` DDBoostFS or NFS mount point on container```
 - storageUnit
@@ -30,4 +36,7 @@
 ``` Type of tag```
 - backupTags \ Value
 ``` Value of type tag```
-
+- fixValues \ Type
+``` Type of tag```
+- fixValues \ Type
+``` Hardcoded value ```
