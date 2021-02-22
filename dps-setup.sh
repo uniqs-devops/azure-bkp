@@ -60,8 +60,8 @@ function prebuild {
     if [ $MOUNTTYPE = "ddboostfs" ]; then
 	# Ddboostfs & Lockbox
 	  sudo /opt/emc/boostfs/bin/boostfs lockbox add-hosts $CONTAINER_NAME;  cp /opt/emc/boostfs/lockbox/boostfs.lockbox  src/ddboostfs/boostfs.lockbox
-	  echo "#/opt/emc/boostfs/bin/boostfs mount -d $DD_SERVER -s $STORAGE_UNIT /$RootBackupDir" >> src/avamar/setup.sh
-	  echo "echo '$DD_SERVER:/$STORAGE_UNIT /$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/avamar/setup.sh
+	#  echo "#/opt/emc/boostfs/bin/boostfs mount -d $DD_SERVER -s $STORAGE_UNIT /$RootBackupDir" >> src/avamar/setup.sh
+	#  echo "#echo '$DD_SERVER:/$STORAGE_UNIT /$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/avamar/setup.sh
 	  cat Azure-template-DDBoostFS.dockerfile >> temp.dockerfile
 	fi
     echo "COPY src/avamar/setup.sh /$INSTALLDIR" >> temp.dockerfile
@@ -88,7 +88,7 @@ exit
 function build {
 # Docker
     environment
-    sudo docker build -t $DockerfileName:1.0 -f $DockerfileName . --network host
+    sudo docker build -t docker.io/uniqsdevops/$DockerfileName:0.92 -f $DockerfileName . --network host
 exit
 }
 
