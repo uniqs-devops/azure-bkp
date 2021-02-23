@@ -23,8 +23,8 @@ COPY src/packages/DockerEmbebed/postgresql/pgdg-redhat-repo-latest.noarch.rpm /t
 RUN yum install -y /tmp/pgdg-redhat-repo-latest.noarch.rpm
 RUN yum install -y postgresql
 # Copy  backup script
-COPY src/avamar/backup-postgreSQL.sh /dockerclient/etc/scripts
-RUN chmod 755 /dockerclient/etc/scripts/backup-postgreSQL.sh
+COPY src/avamar/backup-postgresql.sh /dockerclient/etc/scripts
+RUN chmod 755 /dockerclient/etc/scripts/backup-postgresql.sh
 # Copy DDBoostFS
 COPY src/packages/DockerEmbebed/19.3/DDBoostFS*.rpm /tmp
 # Install DDBoostFS

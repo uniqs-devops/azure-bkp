@@ -1,6 +1,8 @@
 #!/bin/bash
 # SWO Avamar script for backup in Azure POSTGRES.
 # Disclaimer: Based on an original Software One script
+#String de ejemplo
+mongodump --uri="mongodb://dps:tag2gaUPJJ87ANCG7xx5QGCsglnjYc3KTCJXoz9GtVeu1SGo3hBzmZWK7L2nXF2eueM5fRuR16yr5WokmmglKg==@dps.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@dps@" --gzip --out /backups/`date +"%Y-%m-%d"`
 
 version="1.0"
 

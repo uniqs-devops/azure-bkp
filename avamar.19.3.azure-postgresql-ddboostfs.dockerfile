@@ -1,9 +1,5 @@
 #!/bin/sh
 FROM centos:latest
-#Proxy config
-#ENV HTTP_PROXY=http://127.0.0.1:3001
-#ENV HTTPS_PROXY=https://127.0.0.1:3001
-#ENV NO_PROXY=*.test.example.com,.example2.com
 # Install SO packages
 RUN yum install -y --setopt=tsflags=nodocs openssh-server \
  && yum install -y --setopt=tsflags=nodocs iproute net-tools initscripts \
@@ -46,13 +42,13 @@ EXPOSE 29000
 EXPOSE 30101
 EXPOSE 30102
 # Copy PosgreSQL client package
-COPY src/packages/DockerEmbebed/postgresql/postgresql11-*PGDG.*.x86_64.rpm /tmp
-COPY src/packages/DockerEmbebed/postgresql/postgresql11-libs-11.*PGDG.*.x86_64.rpm /tmp
+COPY src/packages/DockerEmbebed/postgresql/postgresql11-*.rhel8.x86_64.rpm /tmp
 # Install PosgreSQL client 
-RUN yum install -y /tmp/postgresql11-*PGDG.*.x86_64.rpm /tmp/postgresql11-libs-11.*PGDG.*.x86_64.rpm
+RUN yum install -y /tmp/postgresql11-libs-11.11*.rhel8.x86_64.rpm
+RUN yum install -y /tmp/postgresql11-11.11*.rhel8.x86_64.rpm
 # Copy  backup script
-COPY src/avamar/backup-postgreSQL.sh /dockerclient/etc/scripts
-RUN chmod 755 /dockerclient/etc/scripts/backup-postgreSQL.sh
+COPY src/avamar/backup-postgresql.sh /dockerclient/etc/scripts
+RUN chmod 755 /dockerclient/etc/scripts/backup-postgresql.sh
 # Copy DDBoostFS
 COPY src/packages/DockerEmbebed/19.3/DDBoostFS*.rpm /tmp
 # Install DDBoostFS

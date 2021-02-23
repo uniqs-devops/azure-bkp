@@ -29,6 +29,8 @@ USEPROXY=`cat dps-setup.json  | jq -r '.proxy.useProxy'`
 PROXYHTTPNAME=`cat dps-setup.json  | jq -r '.proxy.proxyHttpName'`
 PROXYHTTPSNAME=`cat dps-setup.json  | jq -r '.proxy.proxyHttpsName'`
 NOPROXY=`cat dps-setup.json  | jq -r '.proxy.noProxy'` 
+USECERTS=`cat dps-setup.json  | jq -r '.certs.useCerts'`
+CERTFILE=`cat dps-setup.json  | jq -r '.certs.certFile'`
 DockerfileName=$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
 if [ $USEAVAMAR = "YES" ]; then DockerfileName=avamar.$AVEVERSION.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile; fi
 }
@@ -44,10 +46,17 @@ function prebuild {
         environment
     # Docker container baseline
 	cp Azure-header.dockerfile temp.dockerfile
+	if [ $USECERTS = "YES" ]; then
+		echo "#Certs configs" >> temp.dockerfile
+		echo "COPY src/packages/DockerEmbebed/certificates/$CERTFILE /etc/pki/ca-trust/source/anchors/" >> temp.dockerfile
+		echo "RUN update-ca-trust" >> temp.dockerfile
+	fi
 	if [ $USEPROXY = "YES" ]; then
 		echo "#Proxy config" >> temp.dockerfile
 		echo "ENV HTTP_PROXY=$PROXYHTTPNAME" >> temp.dockerfile
 		echo "ENV HTTPS_PROXY=$PROXYHTTPSNAME" >> temp.dockerfile
+		echo "ENV http_proxy=$PROXYHTTPNAME" >> temp.dockerfile
+		echo "ENV https_proyy=$PROXYHTTPSNAME" >> temp.dockerfile
 		echo "ENV NO_PROXY=$NOPROXY" >> temp.dockerfile
 	fi
     cat Azure-template.dockerfile >> temp.dockerfile
@@ -64,10 +73,10 @@ function prebuild {
       cat Azure-template-Avamar.dockerfile >> temp.dockerfile
     else
           DockerfileName=$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
-          echo "echo '00 09 * * 1-5 /$INSTALLDIR/etc/scripts/backup-postgreSQL.sh' >> /var/spool/cron/root" >> src/avamar/setup.sh
+          echo "echo '00 09 * * 1-5 /$INSTALLDIR/etc/scripts/backup-$DOCKERTYPE.sh' >> /var/spool/cron/root" >> src/avamar/setup.sh
     fi
-        if [ $DOCKERTYPE = "postgresql" ]; then cat Azure-template-PostgreSQL.dockerfile >> temp.dockerfile; fi
-        if [ $DOCKERTYPE = "mongodb" ] || [ $DOCKERTYPE = "cosmodb" ]; then cat Azure-template-MongoDB.dockerfile >> temp.dockerfile; fi
+        if [ $DOCKERTYPE = "postgresql" ]; then cat Azure-template-$DOCKERTYPE.dockerfile >> temp.dockerfile; fi
+        if [ $DOCKERTYPE = "mongodb" ] || [ $DOCKERTYPE = "cosmodb" ]; then cat Azure-template-$DOCKERTYPE.dockerfile >> temp.dockerfile; fi
     if [ $MOUNTTYPE = "ddboostfs" ]; then
         # Ddboostfs & Lockbox
           sudo /opt/emc/boostfs/bin/boostfs lockbox add-hosts $CONTAINER_NAME;  cp /opt/emc/boostfs/lockbox/boostfs.lockbox  src/ddboostfs/boostfs.lockbox
@@ -88,7 +97,7 @@ function prebuild {
     fi
     sed -i -e "s/DUMMYINSTALLDIR/$INSTALLDIR/g" temp.dockerfile
         sed -i -e "s/DUMMYVERSION/$AVEVERSION/g" temp.dockerfile
-        sed -i -e "s/DUMMYINSTALLDIR/$INSTALLDIR/g" src/avamar/backup-postgreSQL.sh
+        sed -i -e "s/DUMMYINSTALLDIR/$INSTALLDIR/g" src/avamar/backup-$DOCKERTYPE.sh
     # azure
     echo $RESOURCES > src/avamar/resources
         # Dockerfile Name

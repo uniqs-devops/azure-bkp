@@ -1,1 +1,8 @@
-- nslookup available on container
+Spanish
+
+- "avamarDomain":  debe soportar multuples subdominios
+	Ej. "avamarDomain": "/Contenedores/PostgreSQL"
+
+- "resourceGroup": debe soportar mas de un resourceGroup
+	EJ.  "resourceGroup": "cibd1weursgglocolcrit001, cibd1weursgglocolcrit002"
+	Asume que cada resourceGroup tiene un keyVaut
