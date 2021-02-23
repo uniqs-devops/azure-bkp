@@ -72,9 +72,13 @@ function prebuild {
         # Ddboostfs & Lockbox
           sudo /opt/emc/boostfs/bin/boostfs lockbox add-hosts $CONTAINER_NAME;  cp /opt/emc/boostfs/lockbox/boostfs.lockbox  src/ddboostfs/boostfs.lockbox
         #  echo "#/opt/emc/boostfs/bin/boostfs mount -d $DD_SERVER -s $STORAGE_UNIT /$RootBackupDir" >> src/avamar/setup.sh
-        #  echo "#echo '$DD_SERVER:/$STORAGE_UNIT /$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/avamar/setup.sh
+        #  echo "echo '#$DD_SERVER:/$STORAGE_UNIT /$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/avamar/setup.sh
           cat Azure-template-DDBoostFS.dockerfile >> temp.dockerfile
         fi
+	  echo "#/opt/emc/boostfs/bin/boostfs mount -d $DD_SERVER -s $STORAGE_UNIT /$RootBackupDir" >> src/avamar/setup.sh
+	  echo "echo '# $DD_SERVER:/$STORAGE_UNIT /$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/avamar/setup.sh
+	  cat Azure-template-DDBoostFS.dockerfile >> temp.dockerfile
+	fi
     echo "COPY src/avamar/setup.sh /$INSTALLDIR" >> temp.dockerfile
     echo "RUN chmod 755 /$INSTALLDIR/setup.sh" >> temp.dockerfile
     echo "RUN /$INSTALLDIR/setup.sh" >> temp.dockerfile
