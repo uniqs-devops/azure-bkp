@@ -46,9 +46,9 @@ function prebuild {
 	cp Azure-header.dockerfile temp.dockerfile
 	if [ $USEPROXY = "YES" ]; then
 		echo "#Proxy config" >> temp.dockerfile
-		echo "ENV HTTP_PROXY=$PROXYHTTPNAME" >> temp.dockerfile
-		echo "ENV HTTPS_PROXY=$PROXYHTTPSNAME" >> temp.dockerfile
-		echo "ENV NO_PROXY=$NOPROXY" >> temp.dockerfile
+		echo "ENV $PROXYHTTPNAME" >> temp.dockerfile
+		echo "ENV $PROXYHTTPSNAME" >> temp.dockerfile
+		echo "ENV $NOPROXY" >> temp.dockerfile
 	fi
     cat Azure-template.dockerfile >> temp.dockerfile
     #
@@ -69,12 +69,21 @@ function prebuild {
         if [ $DOCKERTYPE = "postgresql" ]; then cat Azure-template-PostgreSQL.dockerfile >> temp.dockerfile; fi
         if [ $DOCKERTYPE = "mongodb" ] || [ $DOCKERTYPE = "cosmodb" ]; then cat Azure-template-MongoDB.dockerfile >> temp.dockerfile; fi
     if [ $MOUNTTYPE = "ddboostfs" ]; then
+<<<<<<< HEAD
         # Ddboostfs & Lockbox
           sudo /opt/emc/boostfs/bin/boostfs lockbox add-hosts $CONTAINER_NAME;  cp /opt/emc/boostfs/lockbox/boostfs.lockbox  src/ddboostfs/boostfs.lockbox
+        #  echo "#/opt/emc/boostfs/bin/boostfs mount -d $DD_SERVER -s $STORAGE_UNIT /$RootBackupDir" >> src/avamar/setup.sh
+        #  echo "#echo '$DD_SERVER:/$STORAGE_UNIT /$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/avamar/setup.sh
+          cat Azure-template-DDBoostFS.dockerfile >> temp.dockerfile
+        fi
+=======
+	# Ddboostfs & Lockbox
+	  sudo /opt/emc/boostfs/bin/boostfs lockbox add-hosts $CONTAINER_NAME;  cp /opt/emc/boostfs/lockbox/boostfs.lockbox  src/ddboostfs/boostfs.lockbox
 	  echo "#/opt/emc/boostfs/bin/boostfs mount -d $DD_SERVER -s $STORAGE_UNIT /$RootBackupDir" >> src/avamar/setup.sh
 	  echo "echo '# $DD_SERVER:/$STORAGE_UNIT /$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/avamar/setup.sh
 	  cat Azure-template-DDBoostFS.dockerfile >> temp.dockerfile
 	fi
+>>>>>>> 24c185df05bfee2431cca546da2d56d0488a01b1
     echo "COPY src/avamar/setup.sh /$INSTALLDIR" >> temp.dockerfile
     echo "RUN chmod 755 /$INSTALLDIR/setup.sh" >> temp.dockerfile
     echo "RUN /$INSTALLDIR/setup.sh" >> temp.dockerfile
