@@ -1,9 +1,13 @@
 #!/bin/sh
 FROM centos:latest
 # Install SO packages
+env http://127.0.0.1:3001
+env https://127.0.0.1:3001
+env *.test.example.com,.example2.com
+# Install SO packages
 RUN yum install -y --setopt=tsflags=nodocs openssh-server \
  && yum install -y --setopt=tsflags=nodocs iproute net-tools initscripts \
- && yum install -y --setopt=tsflags=nodocs jq cronie\
+ && yum install -y --setopt=tsflags=nodocs jq cronie bind-utils\
  && yum clean all
 workdir /tmp
 # Create install folder
@@ -41,11 +45,10 @@ EXPOSE 27001
 EXPOSE 29000
 EXPOSE 30101
 EXPOSE 30102
-# Copy PosgreSQL repo install package
-COPY src/packages/DockerEmbebed/postgresql/pgdg-redhat-repo-latest.noarch.rpm /tmp
-# Install PosgreSQL client & repo package
-RUN yum install -y /tmp/pgdg-redhat-repo-latest.noarch.rpm
-RUN yum install -y postgresql
+# Copy PosgreSQL client package
+COPY src/packages/DockerEmbebed/postgresql/postgresql11-11.9-1PGDG.rhel8.x86_64.rpm /tmp
+# Install PosgreSQL client 
+RUN yum install -y /tmp/postgresql11-11.9-1PGDG.rhel8.x86_64.rpm
 # Copy  backup script
 COPY src/avamar/backup-postgreSQL.sh /dockerclient/etc/scripts
 RUN chmod 755 /dockerclient/etc/scripts/backup-postgreSQL.sh

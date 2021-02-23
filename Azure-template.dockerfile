@@ -1,5 +1,3 @@
-#!/bin/sh
-FROM centos:latest
 # Install SO packages
 RUN yum install -y --setopt=tsflags=nodocs openssh-server \
  && yum install -y --setopt=tsflags=nodocs iproute net-tools initscripts \

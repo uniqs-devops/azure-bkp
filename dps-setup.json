@@ -7,6 +7,12 @@
   "resourceGroup": "cibd1weursgglocolcrit001",
   "useTags": "NO",
   "useFQDN": "NO",
+  "proxy": {
+    "useProxy": "YES",
+    "proxyHttpName": "http://127.0.0.1:3001",
+    "proxyHttpsName": "https://127.0.0.1:3001",
+    "noProxy": "*.test.example.com,.example2.com"
+  },
   "avamar": {
     "useAvamar": "YES",
     "avamarServerName": "cibp1weuaval001.shared.azure.scib.gs.corp",
