@@ -2,10 +2,10 @@
   "cloudProvider": "azure",
   "dockerType": "mongodb",
   "dockerTypeName": "MG",
-  "keyVaultName": "cibd1weuakvglocolcrit001",
-  "tenantId": "35595a02-4d6d-44ac-99e1-f9ab4cd872db",
-  "resourceGroup": "cibd1weursgglocolcrit001",
-  "useTags": "YES",
+  "keyVaultName": "",
+  "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
+  "resourceGroup": "AutoProxyRG",
+  "useTags": "NO",
   "useFQDN": "YES",
   "proxy": {
     "useProxy": "NO",
@@ -74,11 +74,11 @@
     "fixValues": [
     {
       "type": "user",
-      "value": "avamar-backup"
+      "value": "dps"
     },
     {
       "type": "port",
-      "value": "5432"
+      "value": "10255"
     },
     {
       "type": "database",
@@ -86,11 +86,11 @@
     },
     {
       "type": "task",
-      "value": "postgresql"
+      "value": "mongodb"
     },
     {
       "type": "secret",
-      "value": "avamar-backup-cibd1weuapsglocolcrit001"
+      "value": "mongodbsecret"
     }
   ]
 }

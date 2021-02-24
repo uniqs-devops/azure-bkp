@@ -61,7 +61,7 @@ Deployment sequence (from DCI):
    
    Run ```az ad sp create-for-rbac``` to create cert (.pem) file. Please run before 'az login' to setup account if you are no logged in yet.
    ```	
-   - az ad sp create-for-rbac --name 'PaaSBackup' --create-cert; mv ~/*.pem /home/dps/uniqs-dps/src/azure/azurelogin.pem
+   - az ad sp create-for-rbac --name 'PaaSBackup' --create-cert; mv ~/*.pem src/azure/azurelogin.pem
    ```
 
 2) Run ```dps-setup.sh -p``` to prebuild dockerfile.
