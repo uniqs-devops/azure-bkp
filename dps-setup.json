@@ -8,13 +8,13 @@
   "useTags": "NO",
   "useFQDN": "NO",
   "proxy": {
-    "useProxy": "YES",
+    "useProxy": "NO",
     "proxyHttpName": "http://proxy.threatpulse.net:8080",
     "proxyHttpsName": "https://proxy.threatpulse.net:8080",
     "noProxy": "*.test.example.com,.example2.com"
   },
   "certs": {
-    "useCerts": "YES",
+    "useCerts": "NO",
     "certFile": "ca-proxy_threatpulse_net"
   },
   "avamar": {
