@@ -108,7 +108,7 @@ exit
 function build {
 # Docker
     environment
-    sudo docker build -t $DockerfileName:1.0 -f $DockerfileName . --network host
+    sudo docker build -t $DockerfileName:1.0 -f $DockerfileName --add-host proxy.threatpulse.net:98.158.252.164 . --network host
 exit
 }
 
