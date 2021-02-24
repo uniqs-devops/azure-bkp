@@ -108,7 +108,7 @@ exit
 function build {
 # Docker
     environment
-    sudo docker build -t docker.io/uniqsdevops/$DockerfileName:0.92 -f $DockerfileName . --network host
+    sudo docker build -t $DockerfileName:1.0 -f $DockerfileName . --network host
 exit
 }
 
