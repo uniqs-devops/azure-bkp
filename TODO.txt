@@ -16,3 +16,11 @@ Spanish
   Base de datos -- dps
   Clave -- tag2gaUPJJ87ANCG7xx5QGCsglnjYc3KTCJXoz9GtVeu1SGo3hBzmZWK7L2nXF2eueM5fRuR16yr5WokmmglKg==
   Recurso azure para el corte -- Microsoft.DocumentDb/databaseAccounts
+
+- Docker build en dps-setup.sh debe aceptar esto desde una clave json del grupo "proxy" para IP y un parsing para "proxy.proxyHttpName"
+
+  --add-host proxy.threatpulse.net:98.158.252.164
+
+- Revisar poner /tmp/ en dockerfile para instalacion de postgres
+
+- Verificar si corriendo una nueva instancia del contenedor se pueden reconfigurar los clientes de Avamar y Postgres
