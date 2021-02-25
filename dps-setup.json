@@ -2,7 +2,7 @@
   "cloudProvider": "azure",
   "dockerType": "mongodb",
   "dockerTypeName": "MG",
-  "keyVaultName": "",
+  "keyVaultName": "keyvaultautoproxyrg",
   "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
   "resourceGroup": "AutoProxyRG",
   "useTags": "NO",
