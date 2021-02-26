@@ -70,7 +70,7 @@ if [ -f ${ConfigDir}/swoconfig ]; then rm -rf ${ConfigDir}/swoconfig; fi
 echo
 echo "*********************************** SEARCHING cloud resources **************************************"
 echo
-az resource list  --resource-type $RESOURCES  --resource-group $RESOURCEGROUP -o table | tail -n +3 | awk {'print $1'} > ${ConfigDir}/swoconfig
+az resource list  --resource-type Microsoft.Sql/servers/databases -o table | tail -n +3 | awk {'print $1'} | awk -F/ '{print $1}' > ${ConfigDir}/swoconfig
 
 cat ${ConfigDir}/swoconfig | while read linea
 do
@@ -81,11 +81,11 @@ do
                         username=${tags[2]}
                         task=${tags[0]}
                         secret=${tags[0]}
-                        if [ ${tags[1]} = "*" ]; then
-                                accounts=(`az cosmosdb list --resource-group $RESOURCEGROUP | jq -r '.[].name'`)								
-                        else
-                                accounts=(${tags[1]})
-                        fi
+                        #if [ ${tags[1]} = "*" ]; then
+                        #        dbs=(`az cosmosdb list --resource-group $RESOURCEGROUP | jq -r '.[].name'`)
+                        #else
+                        #        dbs=(${tags[1]})
+                        #fi
                 else
                         accounts=(`az cosmosdb list --resource-group $RESOURCEGROUP | jq -r '.[].name'`)
                         username=$USER_FIX
@@ -93,11 +93,11 @@ do
                         secret=$SECRET_FIX
                         port=$PORT_FIX
                 fi
-                if [ $USEFQDN = "NO" ]; then
-                        server=$(nslookup "$1"".mongo.cosmos.azure.com" | awk -F':' '/^Address: / { matched = 1 } matched { print $2}' | xargs)
+                if [ $USEFQDN = "NO"`awk -F/ '{print $1}' $1` ]; then
+                        server=$(nslookup "$1"".database.windows.net" | awk -F':' '/^Address: / { matched = 1 } matched { print $2}' | xargs)
                         [[ -z "$server" ]] && echo Server Name to IP translate fail || echo IP for server "$1" is "$server"
                 else
-                        server=$1.mongo.cosmos.azure.com
+                        server=`awk -F/ '{print $1}' $1`.database.windows.net
                 fi
                 ERROR=0
                 echo !!!!! Processing token from Keyvault !!!!!
@@ -116,10 +116,8 @@ do
                         break
                 fi
                 pass=$(echo $response | python3 -c 'import sys, json; print (json.load(sys.stdin)["value"])')
-		for account in ${accounts[@]}; do
-			#dbs=(`az cosmosdb mongodb database list --account-name $account --resource-group $RESOURCEGROUP -o table | tail -n +3 | awk {'print $1'}`)
-			#for db in ${dbs[@]}; do
-                        mongodump "--uri=mongodb://$username:${pass}@$server:$port/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@$username@" --gzip --out ${BackupDir}/$server.$db.$task.$(date +%Y%m%d%H%M%S)
+                for account in ${accounts[@]}; do
+						sqlpackage /Action:Export /ssn:tcp:$server,$port /sdn:`awk -F/ '{print $2}' $1` /su:$username /sp:$pass /tf:sqldump.bacpac
                         if [ "$?" != "0" ] ; then
                                 echo "******************** ERROR 009: Wrong Data in Config file $task, EXIT *********************"
                                 ERROR=9
@@ -128,9 +126,9 @@ do
                         echo !!!!! Running  process  $task Account $account Data Base  $db !!!!!
                         echo
                         echo !!!!! Folder size !!!!!
-							du  ${BackupDir}/$server.$db.$task.$(date +%Y%m%d%H)* 
+                                                        du  ${BackupDir}/$server.$db.$task.$(date +%Y%m%d%H)*
                         echo
-			#done
+                        #done
                 done
         fi
 done  < ${ConfigDir}/swoconfig
