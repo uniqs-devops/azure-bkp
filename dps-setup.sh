@@ -45,7 +45,7 @@ function prebuild {
     # Get environment
         environment
     # Docker container baseline
-	cp Azure-header.dockerfile temp.dockerfile
+	cp templates/Azure-header.dockerfile temp.dockerfile
 	if [ $USECERTS = "YES" ]; then
 		echo "#Certs configs" >> temp.dockerfile
 		echo "COPY src/packages/DockerEmbebed/certificates/$CERTFILE /etc/pki/ca-trust/source/anchors/" >> temp.dockerfile
@@ -59,7 +59,7 @@ function prebuild {
 		echo "ENV https_proyy=$PROXYHTTPSNAME" >> temp.dockerfile
 		echo "ENV NO_PROXY=$NOPROXY" >> temp.dockerfile
 	fi
-    cat Azure-template.dockerfile >> temp.dockerfile
+    cat templates/Azure-template.dockerfile >> temp.dockerfile
     #
     echo "#/bin/bash" > src/avamar/setup.sh
     echo "mkdir -p /$RootBackupDir" >> src/avamar/setup.sh
@@ -70,19 +70,18 @@ function prebuild {
       # Avamar
           echo "/$INSTALLDIR/bin/avagent.bin --init --daemon=false --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc/ --mcsaddr=$AVAMAR_SERVER --dpndomain=/$AVAMAR_DOMAIN --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
           echo "/$INSTALLDIR/bin/avagent.bin --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
-      cat Azure-template-Avamar.dockerfile >> temp.dockerfile
+      cat templates/Azure-template-Avamar.dockerfile >> temp.dockerfile
     else
           DockerfileName=$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
           echo "echo '00 09 * * 1-5 /$INSTALLDIR/etc/scripts/backup-$DOCKERTYPE.sh' >> /var/spool/cron/root" >> src/avamar/setup.sh
     fi
-        if [ $DOCKERTYPE = "postgresql" ]; then cat Azure-template-$DOCKERTYPE.dockerfile >> temp.dockerfile; fi
-        if [ $DOCKERTYPE = "mongodb" ] || [ $DOCKERTYPE = "cosmodb" ]; then cat Azure-template-$DOCKERTYPE.dockerfile >> temp.dockerfile; fi
+        cat templates/Azure-template-$DOCKERTYPE.dockerfile >> temp.dockerfile
     if [ $MOUNTTYPE = "ddboostfs" ]; then
         # Ddboostfs & Lockbox
           sudo /opt/emc/boostfs/bin/boostfs lockbox add-hosts $CONTAINER_NAME;  cp /opt/emc/boostfs/lockbox/boostfs.lockbox  src/ddboostfs/boostfs.lockbox
 	  echo "#/opt/emc/boostfs/bin/boostfs mount -d $DD_SERVER -s $STORAGE_UNIT /$RootBackupDir" >> src/avamar/setup.sh
 	  echo "echo '$DD_SERVER:/$STORAGE_UNIT /$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/avamar/setup.sh
-	  cat Azure-template-DDBoostFS.dockerfile >> temp.dockerfile
+	  cat templates/Azure-template-DDBoostFS.dockerfile >> temp.dockerfile
 	fi
     echo "COPY src/avamar/setup.sh /$INSTALLDIR" >> temp.dockerfile
     echo "RUN chmod 755 /$INSTALLDIR/setup.sh" >> temp.dockerfile

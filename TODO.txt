@@ -7,16 +7,6 @@ Spanish
 	EJ.  "resourceGroup": "cibd1weursgglocolcrit001, cibd1weursgglocolcrit002"
 	Asume que cada resourceGroup tiene un keyVaut
 
-- Construir el script de backup de MongoDB/CosmoDB a partir de este ejemplo ya probado
-
-  mongodump --uri="mongodb://dps:tag2gaUPJJ87ANCG7xx5QGCsglnjYc3KTCJXoz9GtVeu1SGo3hBzmZWK7L2nXF2eueM5fRuR16yr5WokmmglKg==@dps.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@dps@" --gzip --out /backups/`date +"%Y-%m-%d"`
-
-  Donde:
-  Host -- dps.mongo.cosmos.azure.com
-  Base de datos -- dps
-  Clave -- tag2gaUPJJ87ANCG7xx5QGCsglnjYc3KTCJXoz9GtVeu1SGo3hBzmZWK7L2nXF2eueM5fRuR16yr5WokmmglKg==
-  Recurso azure para el corte -- Microsoft.DocumentDb/databaseAccounts
-
 - Docker build en dps-setup.sh debe aceptar esto desde una clave json del grupo "proxy" para IP y un parsing para "proxy.proxyHttpName"
 
   --add-host proxy.threatpulse.net:98.158.252.164

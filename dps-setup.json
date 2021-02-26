@@ -1,7 +1,7 @@
 {
   "cloudProvider": "azure",
-  "dockerType": "mongodb",
-  "dockerTypeName": "MG",
+  "dockerType": "sql",
+  "dockerTypeName": "SQL",
   "keyVaultName": "keyvaultautoproxyrg",
   "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
   "resourceGroup": "AutoProxyRG",
@@ -37,8 +37,8 @@
   },
   "azureResources": [
     {
-      "type": "MG",
-      "resourceType": "Microsoft.DocumentDb/databaseAccounts"
+      "type": "SQL",
+      "resourceType": "Microsoft.Sql/servers/databases"
     },
     {
       "type": "PG",
@@ -78,7 +78,7 @@
     },
     {
       "type": "port",
-      "value": "10255"
+      "value": "1433"
     },
     {
       "type": "database",
@@ -86,11 +86,11 @@
     },
     {
       "type": "task",
-      "value": "mongodb"
+      "value": "sql"
     },
     {
       "type": "secret",
-      "value": "mongodbsecret"
+      "value": "sqlsecret"
     }
   ]
 }
