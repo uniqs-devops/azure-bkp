@@ -9,7 +9,6 @@
 #    -b | --build                               to create a docker images
 #    -d | --deploy   --host  <hostname>         to run a new container on host
 #
-
 function environment {
 CONTAINER_NAME=`cat dps-setup.json  | jq -r '.container.containerName'`
 RESOURCES=`jq '.azureResources[] | select(.type=="PG" and .resourceType != null)|.resourceType' dps-setup.json | sed 's/"//g'`
@@ -32,7 +31,11 @@ NOPROXY=`cat dps-setup.json  | jq -r '.proxy.noProxy'`
 USECERTS=`cat dps-setup.json  | jq -r '.certs.useCerts'`
 CERTFILE=`cat dps-setup.json  | jq -r '.certs.certFile'`
 DockerfileName=$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
-if [ $USEAVAMAR = "YES" ]; then DockerfileName=avamar.$AVEVERSION.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile; fi
+if [ $USEAVAMAR = "YES" ]; then 
+    	DockerfileName=avamar.$AVEVERSION.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
+else 
+    	DockerfileName=cron.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
+fi
 }
 function setup {
 # Install packeges needed by DCI
@@ -64,18 +67,20 @@ function prebuild {
     echo "#/bin/bash" > src/avamar/setup.sh
     echo "mkdir -p /$RootBackupDir" >> src/avamar/setup.sh
     if [ $USEAVAMAR = "YES" ]; then
-          DockerfileName=avamar.$AVEVERSION.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
-          # .avagent
+      DockerfileName=avamar.$AVEVERSION.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
+      # .avagent
       echo "--hostname="$CONTAINER_NAME> src/avamar/.avagent
       # Avamar
-          echo "/$INSTALLDIR/bin/avagent.bin --init --daemon=false --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc/ --mcsaddr=$AVAMAR_SERVER --dpndomain=/$AVAMAR_DOMAIN --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
-          echo "/$INSTALLDIR/bin/avagent.bin --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
+      echo "/$INSTALLDIR/bin/avagent.bin --init --daemon=false --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc/ --mcsaddr=$AVAMAR_SERVER --dpndomain=/$AVAMAR_DOMAIN --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
+      echo "/$INSTALLDIR/bin/avagent.bin --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
       cat templates/Azure-template-Avamar.dockerfile >> temp.dockerfile
     else
-          DockerfileName=$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
-          echo "echo '00 09 * * 1-5 /$INSTALLDIR/etc/scripts/backup-$DOCKERTYPE.sh' >> /var/spool/cron/root" >> src/avamar/setup.sh
+      DockerfileName=cron.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
+      echo "echo '00 09 * * 1-5 /$INSTALLDIR/etc/scripts/backup-$DOCKERTYPE.sh' >> /var/spool/cron/root" >> src/avamar/setup.sh
     fi
-        cat templates/Azure-template-$DOCKERTYPE.dockerfile >> temp.dockerfile
+    if [ $DOCKERTYPE != "keyvault" ]; then
+    	cat templates/Azure-template-$DOCKERTYPE.dockerfile >> temp.dockerfile
+    fi
     if [ $MOUNTTYPE = "ddboostfs" ]; then
         # Ddboostfs & Lockbox
           sudo /opt/emc/boostfs/bin/boostfs lockbox add-hosts $CONTAINER_NAME;  cp /opt/emc/boostfs/lockbox/boostfs.lockbox  src/ddboostfs/boostfs.lockbox
