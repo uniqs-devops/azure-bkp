@@ -1,5 +1,5 @@
 # Copy avamar Client to /tmp for installation
-COPY src/packages/DockerEmbebed/DUMMYVERSION/AvamarClient-linux-sles11-x86_64-DUMMYVERSION.*.rpm /tmp
+COPY src/packages/DockerEmbebed/avamar/DUMMYVERSION/AvamarClient-linux-sles11-x86_64-DUMMYVERSION.*.rpm /tmp
 # Install avamar client usen RPM as Install Guide procedure
 RUN rpm -ivh --relocate /usr/local/BackupScripts=/DUMMYINSTALLDIR  /tmp/AvamarClient-linux-sles11-x86_64-DUMMYVERSION.*.rpm
 #Copy .avagent file

@@ -18,7 +18,7 @@ RUN yum install -y /tmp/azure-cli-*.x86_64.rpm
 COPY dps-setup.json /dockerclient
 
 # Copy avamar Client to /tmp for installation
-COPY src/packages/DockerEmbebed/19.3/AvamarClient-linux-sles11-x86_64-19.3.*.rpm /tmp
+COPY src/packages/DockerEmbebed/avamar/19.3/AvamarClient-linux-sles11-x86_64-19.3.*.rpm /tmp
 # Install avamar client usen RPM as Install Guide procedure
 RUN rpm -ivh --relocate /usr/local/avamar=/dockerclient  /tmp/AvamarClient-linux-sles11-x86_64-19.3.*.rpm
 #Copy .avagent file
