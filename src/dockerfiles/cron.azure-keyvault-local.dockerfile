@@ -17,7 +17,7 @@ RUN yum install -y /tmp/azure-cli-*.x86_64.rpm
 # json file
 COPY dps-setup.json /dockerclient
 
-COPY src/avamar/setup.sh /dockerclient
+COPY src/BackupScripts/setup.sh /dockerclient
 RUN chmod 755 /dockerclient/setup.sh
 RUN /dockerclient/setup.sh
 # Cleanup /tmp folder, agent start  and Configuration persist

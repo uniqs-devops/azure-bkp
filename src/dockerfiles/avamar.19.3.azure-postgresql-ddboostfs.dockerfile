@@ -22,7 +22,7 @@ COPY src/packages/DockerEmbebed/19.3/AvamarClient-linux-sles11-x86_64-19.3.*.rpm
 # Install avamar client usen RPM as Install Guide procedure
 RUN rpm -ivh --relocate /usr/local/avamar=/dockerclient  /tmp/AvamarClient-linux-sles11-x86_64-19.3.*.rpm
 #Copy .avagent file
-COPY src/avamar/.avagent /dockerclient
+COPY src/BackupScripts/.avagent /dockerclient
 # Avamar Client inbond ports
 EXPOSE 28002
 EXPOSE 30001
@@ -47,15 +47,15 @@ COPY src/packages/DockerEmbebed/postgresql/postgresql11-*.rhel8.x86_64.rpm /tmp
 RUN yum install -y /tmp/postgresql11-libs-11.11*.rhel8.x86_64.rpm
 RUN yum install -y /tmp/postgresql11-11.11*.rhel8.x86_64.rpm
 # Copy  backup script
-COPY src/avamar/backup-postgresql.sh /dockerclient/etc/scripts
+COPY src/BackupScripts/backup-postgresql.sh /dockerclient/etc/scripts
 RUN chmod 755 /dockerclient/etc/scripts/backup-postgresql.sh
 # Copy DDBoostFS
-COPY src/packages/DockerEmbebed/19.3/DDBoostFS*.rpm /tmp
+COPY src/packages/DockerEmbebed/ddboostfs/DDBoostFS*.rpm /tmp
 # Install DDBoostFS
 RUN yum localinstall -y /tmp/DDBoostFS*.rpm
 # Copy DDBoostFS lockbox file
 COPY src/ddboostfs/boostfs.lockbox /opt/emc/boostfs/lockbox/boostfs.lockbox
-COPY src/avamar/setup.sh /dockerclient
+COPY src/BackupScripts/setup.sh /dockerclient
 RUN chmod 755 /dockerclient/setup.sh
 RUN /dockerclient/setup.sh
 # Cleanup /tmp folder, agent start  and Configuration persist

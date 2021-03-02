@@ -41,7 +41,7 @@ Requirements when use DDboostFS
 	c) Install DDBoostFS (DCI side)
 
 	```	
-	- sudo yum localinstall -y src/packages/DockerEmbebed/<version>/DDBoostFS-<version>.rhel.x86_64.rpm
+	- sudo yum localinstall -y src/packages/DockerEmbebed/ddboostfs/DDBoostFS-<version>.rhel.x86_64.rpm
 	```
 
 	d) Create a lockbox file (DCI side)

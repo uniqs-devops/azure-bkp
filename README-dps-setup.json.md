@@ -1,9 +1,12 @@
 - cloudProvider
 ``` Azure or AWS or GCP ```
 - dockerType
-``` PostgreSQL or CosmoDB or asset type to backup ```
+``` "postgresql" or "sql" or "keyvault" or "mongodb" or asset type to backup ```
+``` is a restricted name ```
 - dockerTypeName
 ``` Sort of dockerType ```
+``` "PG" or "SQL" or "KV" or "MG" ```
+``` is a restricted name ```
 - keyVaultName
 ``` Azure Kay Vault name ```
 - tenantId
