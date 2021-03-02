@@ -37,15 +37,15 @@
   },
   "azureResources": [
     {
-      "type": "MG",
-      "resourceType": "Microsoft.DocumentDb/databaseAccounts"
+      "type": "BS",
+      "resourceType": "Microsoft.Storage/storageAccounts"
     },
     {
-      "type": "PG",
+      "type": "BS",
       "resourceType": null
     },
     {
-      "type": "PG",
+      "type": "BS",
       "resourceType": null
     }
   ],

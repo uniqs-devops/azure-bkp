@@ -1,0 +1,4 @@
+$resourceGroupName = "AutoProxyRG"
+$templateUri = "/home/dps/azure-bkp/auxiliary_automation_procedures/PowerShell/StorageAcccount/storageaccountparameters.json"
+$templateParameterFile = "/home/dps/azure-bkp/auxiliary_automation_procedures/PowerShell/StorageAcccount/storageaccountparameters.json"
+New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri $templateUri -TemplateParameterFile $templateParameterFile -Location eastus

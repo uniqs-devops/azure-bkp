@@ -18,16 +18,13 @@ MOUNTTYPE=`cat $ConfigDir/dps-setup.json  | jq -r '.datadomain.mountType'`
 ###az login --service-principal -u http://PaaSBackup --password $ConfigDir/azurelogin.pem --tenant $TENANID
 
 if [ ! -d $RootBackupDir ]; then mkdir mkdir ${RootBackupDir}; fi
-
-if [ $MOUNTTYPE = "nfs" ] || [ $MOUNTTYPE = "DDBoostFS" ]; then
-		if [ ! -d ${RootBackupDir} ]; then mkdir ${RootBackupDir}; fi
-		if [ ! -d ${ServiceBackupDir} ]; then mkdir ${ServiceBackupDir}; fi
-		if [ ! -d ${ServiceBackupDir}/backups ]; then mkdir ${ServiceBackupDir}/backups; fi
-		if [ ! -d ${ServiceBackupDir}/restore ]; then mkdir ${ServiceBackupDir}/restore; fi
-		if [ ! -d ${ServiceBackupDir}/old ]; then mkdir ${ServiceBackupDir}/old; fi
-		find ${LogDir}/* -mtime +15 -type f -exec rm {} \;
-		find ${RootBackupDir}/* -mtime +15 -type f -exec rm {} \;
-fi
+if [ ! -d ${RootBackupDir} ]; then mkdir ${RootBackupDir}; fi
+if [ ! -d ${ServiceBackupDir} ]; then mkdir ${ServiceBackupDir}; fi
+if [ ! -d ${ServiceBackupDir}/backups ]; then mkdir ${ServiceBackupDir}/backups; fi
+if [ ! -d ${ServiceBackupDir}/restore ]; then mkdir ${ServiceBackupDir}/restore; fi
+if [ ! -d ${ServiceBackupDir}/old ]; then mkdir ${ServiceBackupDir}/old; fi
+find ${LogDir}/* -mtime +15 -type f -exec rm {} \;
+find ${RootBackupDir}/* -mtime +15 -type f -exec rm {} \;
 
 if [ ! -d $ConfigDir ]; then
 	echo $ConfigDir
