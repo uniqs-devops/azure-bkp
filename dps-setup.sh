@@ -65,19 +65,19 @@ function prebuild {
 	fi
     cat templates/Azure-template.dockerfile >> temp.dockerfile
     #
-    echo "#/bin/bash" > src/BackupScripts/setup.sh
-    echo "mkdir -p /$RootBackupDir" >> src/BackupScripts/setup.sh
+    echo "#/bin/bash" > src/avamar/setup.sh
+    echo "mkdir -p /$RootBackupDir" >> src/avamar/setup.sh
     if [ $USEAVAMAR = "YES" ]; then
       DockerfileName=$Dockerfolder/avamar.$AVEVERSION.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
       # .avagent
-      echo "--hostname="$CONTAINER_NAME> src/BackupScripts/.avagent
+      echo "--hostname="$CONTAINER_NAME> src/avamar/.avagent
       # Avamar
-      echo "/$INSTALLDIR/bin/avagent.bin --init --daemon=false --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc/ --mcsaddr=$AVAMAR_SERVER --dpndomain=/$AVAMAR_DOMAIN --logfile=/$INSTALLDIR/var/avagent.log" >> src/BackupScripts/setup.sh
-      echo "/$INSTALLDIR/bin/avagent.bin --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc --logfile=/$INSTALLDIR/var/avagent.log" >> src/BackupScripts/setup.sh
+      echo "/$INSTALLDIR/bin/avagent.bin --init --daemon=false --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc/ --mcsaddr=$AVAMAR_SERVER --dpndomain=/$AVAMAR_DOMAIN --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
+      echo "/$INSTALLDIR/bin/avagent.bin --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
       cat templates/Azure-template-Avamar.dockerfile >> temp.dockerfile
     else
       DockerfileName=$Dockerfolder/cron.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
-      echo "echo '00 09 * * 1-5 /$INSTALLDIR/etc/scripts/backup-$DOCKERTYPE.sh' >> /var/spool/cron/root" >> src/BackupScripts/setup.sh
+      echo "echo '00 09 * * 1-5 /$INSTALLDIR/etc/scripts/backup-$DOCKERTYPE.sh' >> /var/spool/cron/root" >> src/avamar/setup.sh
     fi
     if [ $DOCKERTYPE != "keyvault" ]; then
     	cat templates/Azure-template-$DOCKERTYPE.dockerfile >> temp.dockerfile
@@ -85,11 +85,11 @@ function prebuild {
     if [ $MOUNTTYPE = "ddboostfs" ]; then
         # Ddboostfs & Lockbox
           sudo /opt/emc/boostfs/bin/boostfs lockbox add-hosts $CONTAINER_NAME;  cp /opt/emc/boostfs/lockbox/boostfs.lockbox  src/ddboostfs/boostfs.lockbox
-	  echo "#/opt/emc/boostfs/bin/boostfs mount -d $DD_SERVER -s $STORAGE_UNIT /$RootBackupDir" >> src/BackupScripts/setup.sh
-	  echo "echo '$DD_SERVER:/$STORAGE_UNIT /$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/BackupScripts/setup.sh
+	  echo "#/opt/emc/boostfs/bin/boostfs mount -d $DD_SERVER -s $STORAGE_UNIT /$RootBackupDir" >> src/avamar/setup.sh
+	  echo "echo '$DD_SERVER:/$STORAGE_UNIT /$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/avamar/setup.sh
 	  cat templates/Azure-template-DDBoostFS.dockerfile >> temp.dockerfile
 	fi
-    echo "COPY src/BackupScripts/setup.sh /$INSTALLDIR" >> temp.dockerfile
+    echo "COPY src/avamar/setup.sh /$INSTALLDIR" >> temp.dockerfile
     echo "RUN chmod 755 /$INSTALLDIR/setup.sh" >> temp.dockerfile
     echo "RUN /$INSTALLDIR/setup.sh" >> temp.dockerfile
     echo "# Cleanup /tmp folder, agent start  and Configuration persist" >> temp.dockerfile
@@ -102,9 +102,9 @@ function prebuild {
     fi
     sed -i -e "s/DUMMYINSTALLDIR/$INSTALLDIR/g" temp.dockerfile
         sed -i -e "s/DUMMYVERSION/$AVEVERSION/g" temp.dockerfile
-        sed -i -e "s/DUMMYINSTALLDIR/$INSTALLDIR/g" src/BackupScripts/backup-$DOCKERTYPE.sh
+        sed -i -e "s/DUMMYINSTALLDIR/$INSTALLDIR/g" src/avamar/backup-$DOCKERTYPE.sh
     # azure
-    echo $RESOURCES > src/BackupScripts/resources
+    echo $RESOURCES > src/avamar/resources
         # Dockerfile Name
         mv temp.dockerfile $DockerfileName
 exit
@@ -113,7 +113,7 @@ exit
 function build {
 # Docker
     environment
-    sudo docker build -t $DockerfileName:1.0 -f $DockerfileName --add-host proxy.threatpulse.net:98.158.252.164 . --network host
+    sudo docker build -t $DockerfileName:1.0 -f $DockerfileName . --network host
 exit
 }
 
@@ -187,5 +187,6 @@ while [ "$1" != "" ]; do
                                 exit  1
     esac
 done
+
 
 

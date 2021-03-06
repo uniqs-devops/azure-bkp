@@ -1,14 +1,5 @@
 #!/bin/sh
 FROM centos:latest
-#Certs configs
-COPY src/packages/DockerEmbebed/certificates/ca-proxy_threatpulse_net /etc/pki/ca-trust/source/anchors/
-RUN update-ca-trust
-#Proxy config
-ENV HTTP_PROXY=http://proxy.threatpulse.net:8080
-ENV HTTPS_PROXY=https://proxy.threatpulse.net:8080
-ENV http_proxy=http://proxy.threatpulse.net:8080
-ENV https_proyy=https://proxy.threatpulse.net:8080
-ENV NO_PROXY=cloudcenter.corp,nngg.corp,gsnetcloud.corp,localhost
 # Install SO packages
 RUN yum install -y --setopt=tsflags=nodocs openssh-server \
  && yum install -y --setopt=tsflags=nodocs iproute net-tools initscripts \
@@ -29,9 +20,9 @@ COPY dps-setup.json /dockerclient
 # Copy avamar Client to /tmp for installation
 COPY src/packages/DockerEmbebed/avamar/19.3/AvamarClient-linux-sles11-x86_64-19.3.*.rpm /tmp
 # Install avamar client usen RPM as Install Guide procedure
-RUN rpm -ivh --relocate /usr/local/BackupScripts=/dockerclient  /tmp/AvamarClient-linux-sles11-x86_64-19.3.*.rpm
+RUN rpm -ivh --relocate /usr/local/avamar=/dockerclient  /tmp/AvamarClient-linux-sles11-x86_64-19.3.*.rpm
 #Copy .avagent file
-COPY src/BackupScripts/.avagent /dockerclient
+COPY src/avamar/.avagent /dockerclient
 # Avamar Client inbond ports
 EXPOSE 28002
 EXPOSE 30001
@@ -56,14 +47,8 @@ COPY src/packages/DockerEmbebed/postgresql/postgresql11-*.rhel8.x86_64.rpm /tmp
 RUN yum install -y /tmp/postgresql11-libs-11.11*.rhel8.x86_64.rpm
 RUN yum install -y /tmp/postgresql11-11.11*.rhel8.x86_64.rpm
 # Copy  backup script
-COPY src/BackupScripts/backup-postgresql.sh /dockerclient/etc/scripts
+COPY src/avamar/backup-postgresql.sh /dockerclient/etc/scripts
 RUN chmod 755 /dockerclient/etc/scripts/backup-postgresql.sh
-# Copy DDBoostFS
-COPY src/packages/DockerEmbebed/ddboostfs/DDBoostFS*.rpm /tmp
-# Install DDBoostFS
-RUN yum localinstall -y /tmp/DDBoostFS*.rpm
-# Copy DDBoostFS lockbox file
-COPY src/ddboostfs/boostfs.lockbox /opt/emc/boostfs/lockbox/boostfs.lockbox
 COPY src/avamar/setup.sh /dockerclient
 RUN chmod 755 /dockerclient/setup.sh
 RUN /dockerclient/setup.sh

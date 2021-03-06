@@ -2,38 +2,38 @@
   "cloudProvider": "azure",
   "dockerType": "postgresql",
   "dockerTypeName": "PG",
-  "keyVaultName": "keyvaultdemo777",
-  "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
-  "resourceGroup": "AutoProxyRG",
+  "keyVaultName": "cibd1weuakvglocolcrit001",
+  "tenantId": "35595a02-4d6d-44ac-99e1-f9ab4cd872db",
+  "resourceGroup": "cibd1weursgglocolcrit001",
   "useTags": "NO",
   "useFQDN": "NO",
   "proxy": {
-    "useProxy": "NO",
+    "useProxy": "YES",
     "proxyHttpName": "http://proxy.threatpulse.net:8080",
     "proxyHttpsName": "https://proxy.threatpulse.net:8080",
     "noProxy": "cloudcenter.corp,nngg.corp,gsnetcloud.corp,localhost"
   },
   "certs": {
-    "useCerts": "NO",
+    "useCerts": "YES",
     "certFile": "ca-proxy_threatpulse_net"
   },
   "avamar": {
     "useAvamar": "YES",
-    "avamarServerName": "ave-05.pcalvo.local",
+    "avamarServerName": "cibp1weuaval001.shared.azure.scib.gs.corp",
         "avamarDomain": "clients",
         "installDir": "dockerclient",
         "avamarVersion": "19.3"
   },
   "datadomain": {
     "datadomainServerName": "cibp1weuaval003.shared.azure.scib.gs.corp",
-        "mountType": "local",
+        "mountType": "ddboostfs",
         "RootBackupDir": "Backup"
   },
   "ddboosfs": {
-    "storageUnit": "PaasBackup"
+    "storageUnit": "PaaSbackup"
   },
   "container": {
-    "containerName": "dockerpg-01.pcalvo.local"
+    "containerName": "dockerpg-01.shared.azure.scib.gs.corp"
   },
   "azureResources": [
     {
@@ -90,7 +90,7 @@
     },
     {
       "type": "secret",
-      "value": "postgresqlsecret01"
+      "value": "avamar-backup-cibd1weuapsglocolcrit001"
     }
   ]
 }
