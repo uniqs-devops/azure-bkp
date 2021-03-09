@@ -22,9 +22,9 @@ COPY src/packages/DockerEmbebed/mongodb/mongodb-database-tools-*.x86_64.rpm /tmp
 # Install MongoDB client 
 RUN yum install -y /tmp/mongodb-database-tools-*.x86_64.rpm
 # Copy  backup script
-COPY src/BackupScripts/backup-mongodb.sh /dockerclient/etc/scripts
+COPY src/avamar/backup-mongodb.sh /dockerclient/etc/scripts
 RUN chmod 755 /dockerclient/etc/scripts/backup-mongodb.sh
-COPY src/BackupScripts/setup.sh /dockerclient
+COPY src/avamar/setup.sh /dockerclient
 RUN chmod 755 /dockerclient/setup.sh
 RUN /dockerclient/setup.sh
 # Cleanup /tmp folder, agent start  and Configuration persist

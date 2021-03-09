@@ -14,3 +14,5 @@ Spanish
 - Revisar poner /tmp/ en dockerfile para instalacion de postgres
 
 - Verificar si corriendo una nueva instancia del contenedor se pueden reconfigurar los clientes de Avamar y Postgres
+
+- Creo que deben contemplarse los 5 flavors de MongoDB

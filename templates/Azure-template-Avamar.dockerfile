@@ -5,7 +5,7 @@ RUN rpm -ivh --relocate /usr/local/avamar=/DUMMYINSTALLDIR  /tmp/AvamarClient-li
 #Copy .avagent file
 COPY src/avamar/.avagent /DUMMYINSTALLDIR
 # Avamar Client inbond ports
-EXPOSE 28002
+EXPOSE PORT
 EXPOSE 30001
 EXPOSE 30002
 # Avamar Client outbond ports

@@ -1,17 +1,17 @@
 {
   "cloudProvider": "azure",
-  "dockerType": "postgresql",
-  "dockerTypeName": "PG",
-  "keyVaultName": "keyvaultdemo777",
+  "dockerType": "mongodb",
+  "dockerTypeName": "MG",
+  "keyVaultName": "keyvaultautoproxyrg01",
   "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
   "resourceGroup": "AutoProxyRG",
   "useTags": "NO",
-  "useFQDN": "NO",
+  "useFQDN": "YES",
   "proxy": {
     "useProxy": "NO",
-    "proxyHttpName": "http://proxy.threatpulse.net:8080",
-    "proxyHttpsName": "https://proxy.threatpulse.net:8080",
-    "noProxy": "cloudcenter.corp,nngg.corp,gsnetcloud.corp,localhost"
+    "proxyHttpName": "http://127.0.0.1:3001",
+    "proxyHttpsName": "https://127.0.0.1:3001",
+    "noProxy": "*.test.example.com,.example2.com"
   },
   "certs": {
     "useCerts": "NO",
@@ -19,10 +19,11 @@
   },
   "avamar": {
     "useAvamar": "YES",
-    "avamarServerName": "ave-05.pcalvo.local",
+    "avamarServerName": "ave-03.pcalvo.local",
         "avamarDomain": "clients",
         "installDir": "dockerclient",
-        "avamarVersion": "19.3"
+        "avamarVersion": "19.3",
+	"avamarClientPort": "28002"
   },
   "datadomain": {
     "datadomainServerName": "cibp1weuaval003.shared.azure.scib.gs.corp",
@@ -30,15 +31,15 @@
         "RootBackupDir": "Backup"
   },
   "ddboosfs": {
-    "storageUnit": "PaasBackup"
+    "storageUnit": "PassBackup"
   },
   "container": {
-    "containerName": "dockerpg-01.pcalvo.local"
+    "containerName": "dockermg-01.pcalvo.local"
   },
   "azureResources": [
     {
-      "type": "PG",
-      "resourceType": "Microsoft.DBforPostgreSQL/servers"
+      "type": "MG",
+      "resourceType": "Microsoft.DocumentDb/databaseAccounts"
     },
     {
       "type": "PG",
@@ -74,11 +75,11 @@
     "fixValues": [
     {
       "type": "user",
-      "value": "avamar-backup"
+      "value": "dps"
     },
     {
       "type": "port",
-      "value": "5432"
+      "value": "10255"
     },
     {
       "type": "database",
@@ -86,11 +87,11 @@
     },
     {
       "type": "task",
-      "value": "postgresql"
+      "value": "mongodb"
     },
     {
       "type": "secret",
-      "value": "postgresqlsecret01"
+      "value": "mongodbsecret"
     }
   ]
 }

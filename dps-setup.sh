@@ -16,6 +16,7 @@ DD_SERVER=`cat dps-setup.json  | jq -r '.datadomain.datadomainServerName'`
 STORAGE_UNIT=`cat dps-setup.json  | jq -r '.ddboosfs.storageUnit'`
 RootBackupDir=`cat dps-setup.json  | jq -r '.datadomain.RootBackupDir'`
 AVAMAR_SERVER=`cat dps-setup.json  | jq -r '.avamar.avamarServerName'`
+PORT=`cat dps-setup.json  | jq -r '.avamar.avamarClientPort'`
 AVAMAR_DOMAIN=`cat dps-setup.json  | jq -r '.avamar.avamarDomain'`
 KEY_VAULT=`cat dps-setup.json  | jq -r '.keyVaultName'`
 AVEVERSION=`cat dps-setup.json  | jq -r '.avamar.avamarVersion'`
@@ -70,7 +71,8 @@ function prebuild {
     if [ $USEAVAMAR = "YES" ]; then
       DockerfileName=$Dockerfolder/avamar.$AVEVERSION.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
       # .avagent
-      echo "--hostname="$CONTAINER_NAME> src/avamar/.avagent
+      echo "--hostname="$CONTAINER_NAME > src/avamar/.avagent
+      echo "--listenport="$PORT >> src/avamar/.avagent
       # Avamar
       echo "/$INSTALLDIR/bin/avagent.bin --init --daemon=false --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc/ --mcsaddr=$AVAMAR_SERVER --dpndomain=/$AVAMAR_DOMAIN --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
       echo "/$INSTALLDIR/bin/avagent.bin --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
@@ -94,6 +96,8 @@ function prebuild {
     echo "RUN /$INSTALLDIR/setup.sh" >> temp.dockerfile
     echo "# Cleanup /tmp folder, agent start  and Configuration persist" >> temp.dockerfile
     echo "RUN rm -f /tmp/*.rpm" >> temp.dockerfile
+    echo "RUN echo 127.0.1.1 $CONTAINER_NAME > /etc/hosts && wget http://$CONTAINER_NAME" >> temp.dockerfile
+    echo "CMD echo localhost localhost.localdomain $CONTAINER_NAME > /etc/hosts; supervisord -n;" >> temp.dockerfile
     # About ENTRYPOINTs
     if [ $USEAVAMAR = "YES" ]; then
         echo "ENTRYPOINT mount -a &&  [ -f /etc/init.d/avagent ] && /etc/init.d/avagent start && /bin/bash" >> temp.dockerfile
@@ -101,19 +105,20 @@ function prebuild {
         echo "ENTRYPOINT mount -a && /bin/bash" >> temp.dockerfile
     fi
     sed -i -e "s/DUMMYINSTALLDIR/$INSTALLDIR/g" temp.dockerfile
-        sed -i -e "s/DUMMYVERSION/$AVEVERSION/g" temp.dockerfile
-        sed -i -e "s/DUMMYINSTALLDIR/$INSTALLDIR/g" src/avamar/backup-$DOCKERTYPE.sh
+    sed -i -e "s/PORT/$PORT/g" temp.dockerfile
+    sed -i -e "s/DUMMYVERSION/$AVEVERSION/g" temp.dockerfile
+    sed -i -e "s/DUMMYINSTALLDIR/$INSTALLDIR/g" src/avamar/backup-$DOCKERTYPE.sh
     # azure
     echo $RESOURCES > src/avamar/resources
-        # Dockerfile Name
-        mv temp.dockerfile $DockerfileName
+    # Dockerfile Name
+    mv temp.dockerfile $DockerfileName
 exit
 }
 
 function build {
 # Docker
     environment
-    sudo docker build -t $DockerfileName:1.0 -f $DockerfileName . --network host
+    sudo docker build -t $DockerfileName:1.0 -f $DockerfileName . --network host --add-host $CONTAINER_NAME:192.168.111.210
 exit
 }
 
