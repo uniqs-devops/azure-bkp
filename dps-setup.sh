@@ -93,14 +93,14 @@ function prebuild {
 	fi
     echo "COPY src/avamar/setup.sh /$INSTALLDIR" >> temp.dockerfile
     echo "RUN chmod 755 /$INSTALLDIR/setup.sh" >> temp.dockerfile
-    echo "RUN /$INSTALLDIR/setup.sh" >> temp.dockerfile
+    echo "#RUN /$INSTALLDIR/setup.sh" >> temp.dockerfile
     echo "# Cleanup /tmp folder, agent start  and Configuration persist" >> temp.dockerfile
     echo "RUN rm -f /tmp/*.rpm" >> temp.dockerfile
-    echo "RUN echo 127.0.1.1 $CONTAINER_NAME > /etc/hosts && wget http://$CONTAINER_NAME" >> temp.dockerfile
-    echo "CMD echo localhost localhost.localdomain $CONTAINER_NAME > /etc/hosts; supervisord -n;" >> temp.dockerfile
+    #echo "RUN echo 127.0.1.1 $CONTAINER_NAME > /etc/hosts && wget http://$CONTAINER_NAME" >> temp.dockerfile
+    echo "#CMD echo localhost localhost.localdomain $CONTAINER_NAME > /etc/hosts; supervisord -n;" >> temp.dockerfile
     # About ENTRYPOINTs
     if [ $USEAVAMAR = "YES" ]; then
-        echo "ENTRYPOINT mount -a &&  [ -f /etc/init.d/avagent ] && /etc/init.d/avagent start && /bin/bash" >> temp.dockerfile
+        echo "ENTRYPOINT mount -a &&  [ -f /etc/init.d/avagent ] && /etc/init.d/avagent start && /$INSTALLDIR/setup.sh && /bin/bash" >> temp.dockerfile
     else
         echo "ENTRYPOINT mount -a && /bin/bash" >> temp.dockerfile
     fi
@@ -108,6 +108,7 @@ function prebuild {
     sed -i -e "s/PORT/$PORT/g" temp.dockerfile
     sed -i -e "s/DUMMYVERSION/$AVEVERSION/g" temp.dockerfile
     sed -i -e "s/DUMMYINSTALLDIR/$INSTALLDIR/g" src/avamar/backup-$DOCKERTYPE.sh
+    sed -i -e "s/CONTAINER_NAME/$CONTAINER_NAME/g" src/avamar/backup-$DOCKERTYPE.sh
     # azure
     echo $RESOURCES > src/avamar/resources
     # Dockerfile Name
@@ -118,7 +119,7 @@ exit
 function build {
 # Docker
     environment
-    sudo docker build -t $DockerfileName:1.0 -f $DockerfileName . --network host --add-host $CONTAINER_NAME:192.168.111.210
+    sudo docker build -t $DockerfileName:1.0 -f $DockerfileName . --network host --add-host dockermg-01.pcalvo.local:127.0.1.1 
 exit
 }
 

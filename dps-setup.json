@@ -1,7 +1,7 @@
 {
   "cloudProvider": "azure",
-  "dockerType": "mongodb",
-  "dockerTypeName": "MG",
+  "dockerType": "postgresql",
+  "dockerTypeName": "PG",
   "keyVaultName": "keyvaultautoproxyrg01",
   "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
   "resourceGroup": "AutoProxyRG",
@@ -23,7 +23,7 @@
         "avamarDomain": "clients",
         "installDir": "dockerclient",
         "avamarVersion": "19.3",
-	"avamarClientPort": "28002"
+	"avamarClientPort": "28003"
   },
   "datadomain": {
     "datadomainServerName": "cibp1weuaval003.shared.azure.scib.gs.corp",
@@ -34,12 +34,12 @@
     "storageUnit": "PassBackup"
   },
   "container": {
-    "containerName": "dockermg-01.pcalvo.local"
+    "containerName": "dockerpg-01.pcalvo.local"
   },
   "azureResources": [
     {
-      "type": "MG",
-      "resourceType": "Microsoft.DocumentDb/databaseAccounts"
+      "type": "PG",
+      "resourceType": "Microsoft.DBforPostgreSQL/servers"
     },
     {
       "type": "PG",
@@ -79,7 +79,7 @@
     },
     {
       "type": "port",
-      "value": "10255"
+      "value": "5432"
     },
     {
       "type": "database",
@@ -87,7 +87,7 @@
     },
     {
       "type": "task",
-      "value": "mongodb"
+      "value": "postgresql"
     },
     {
       "type": "secret",

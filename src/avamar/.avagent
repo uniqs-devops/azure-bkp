@@ -1,2 +1,2 @@
---hostname=dockermg-01.pcalvo.local
---listenport=28002
+--hostname=dockerpg-01.pcalvo.local
+--listenport=28003
