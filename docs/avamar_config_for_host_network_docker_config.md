@@ -1,7 +1,7 @@
 # Host config 
 
-[dps@lx-01 azure-bkp]$ hostname -f
-**lx-01.pcalvo.local**
+``[dps@lx-01 azure-bkp]$ hostname -f
+**lx-01.pcalvo.local**````
 
 [dps@lx-01 azure-bkp]$ ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
