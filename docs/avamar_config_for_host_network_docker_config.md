@@ -1,5 +1,5 @@
 # Host config 
-
+```
 [dps@lx-01 azure-bkp]$ hostname -f
 lx-01.pcalvo.local
 
@@ -22,7 +22,7 @@ lx-01.pcalvo.local
        valid_lft forever preferred_lft forever
     inet6 fe80::250:56ff:fea7:9df8/64 scope link
        valid_lft forever preferred_lft forever
-
+```
 # Container DNS config 
 
 [dps@lx-01 azure-bkp]$ nslookup dockermg-01.pcalvo.local
