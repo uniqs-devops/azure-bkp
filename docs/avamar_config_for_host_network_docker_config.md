@@ -1,9 +1,9 @@
 # Host config 
 
 [dps@lx-01 azure-bkp]$ hostname -f
-**lx-01.pcalvo.local**
+lx-01.pcalvo.local
 
-```[dps@lx-01 azure-bkp]$ ip a
+[dps@lx-01 azure-bkp]$ ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
@@ -12,7 +12,7 @@
        valid_lft forever preferred_lft forever
 2: ens192: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
     link/ether 00:50:56:a7:70:10 brd ff:ff:ff:ff:ff:ff
-    inet **192.168.111.210/16** brd 192.168.255.255 scope global noprefixroute ens192
+    inet 192.168.111.210/16 brd 192.168.255.255 scope global noprefixroute ens192
        valid_lft forever preferred_lft forever
     inet6 fe80::b2fc:6d3c:3751:bdc2/64 scope link noprefixroute
        valid_lft forever preferred_lft forever
@@ -23,14 +23,14 @@
     inet6 fe80::250:56ff:fea7:9df8/64 scope link
        valid_lft forever preferred_lft forever
 
-## Container DNS config 
+# Container DNS config 
 
-```[dps@lx-01 azure-bkp]$ nslookup dockermg-01.pcalvo.local
+[dps@lx-01 azure-bkp]$ nslookup dockermg-01.pcalvo.local
 Server:         192.168.10.124
 Address:        192.168.10.124#53
 
 Name:   dockermg-01.pcalvo.local
-Address: **192.168.111.210**```
+Address: **192.168.111.210**
 
 
 [dps@lx-01 azure-bkp]$ nslookup dockerpg-01.pcalvo.local
@@ -46,13 +46,14 @@ Address: **192.168.111.210**
 
 [dps@lx-01 azure-bkp]$ sudo docker run --hostname dockerpg-01.pcalvo.local --name azure-postgresql-ave -d -it --device /dev/fuse --cap-add SYS_ADMIN -p **28003:28003** -p 30001:30001 -p 30002:30002 -p 27000:27000 -p 28001:28001 -p 29000:29000 -p 30001:30001  -p 30003:30003  -p 27000:27000   -P  --network host ae062893d896 /bin/bash
 
-``` Docker containers ```
+# Docker containers 
 [dps@lx-01 azure-bkp]$ sudo docker ps -a
 CONTAINER ID  IMAGE                                                                        COMMAND    CREATED            STATUS                PORTS   NAMES
 5cdfaef65839  localhost/src/dockerfiles/avamar.19.3.azure-postgresql-local.dockerfile:1.0  /bin/bash  About an hour ago  Up About an hour ago          **azure-postgresql-ave**
 917918a9f5a1  localhost/src/dockerfiles/avamar.19.3.azure-mongodb-local.dockerfile:1.0     /bin/bash  About an hour ago  Up About an hour ago          **azure-mongodb-ave**
 
-``` Docker ips ```
+# Docker ips 
+
 [dps@lx-01 azure-bkp]$ sudo docker exec -it azure-mongodb-ave /bin/bash
 [root@dockermg-01 tmp]# ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
