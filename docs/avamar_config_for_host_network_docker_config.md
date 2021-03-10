@@ -88,5 +88,15 @@ CONTAINER ID  IMAGE                                                             
 
 ![image](https://user-images.githubusercontent.com/77995857/110685399-fb9ae800-81bc-11eb-930a-ba929e5ca35e.png)
 
+![image](https://user-images.githubusercontent.com/77995857/110685519-22f1b500-81bd-11eb-9984-715c0632b561.png)
+
+![image](https://user-images.githubusercontent.com/77995857/110685582-356bee80-81bd-11eb-8220-87dad3bdac4b.png)
+
+![image](https://user-images.githubusercontent.com/77995857/110685705-56ccda80-81bd-11eb-8b5e-39b70a7fb532.png)
+
+![image](https://user-images.githubusercontent.com/77995857/110685811-706e2200-81bd-11eb-84b3-b2d6a59c0fe5.png)
+
+![image](https://user-images.githubusercontent.com/77995857/110685917-8bd92d00-81bd-11eb-8aa7-8ddb6ffe7fa4.png)
+
 
 
