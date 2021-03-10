@@ -38,6 +38,9 @@ Address:        192.168.10.124#53
 Name:   dockerpg-01.pcalvo.local
 Address: 192.168.111.210
 
+[dps@lx-01 azure-bkp]$ sudo docker run --hostname dockerpg-01.pcalvo.local --name azure-postgresql-ave -d -it --device /dev/fuse --cap-add SYS_ADMIN -p 28003:28003 -p 30001:30001 -p 30002:30002 -p 27000:27000 -p 28001:28001 -p 29000:29000 -p 30001:30001  -p 30003:30003  -p 27000:27000   -P  --network host ae062893d896 /bin/bash
+
+[dps@lx-01 azure-bkp]$ sudo docker run --hostname dockermg-01.pcalvo.local --name azure-mongodb-ave -d -it --device /dev/fuse --cap-add SYS_ADMIN -p 28002:28002 -p 30001:30001 -p 30002:30002 -p 27000:27000 -p 28001:28001 -p 29000:29000 -p 30001:30001  -p 30003:30003  -p 27000:27000   -P  --network host 3afcc903cbb3 /bin/bash
 
 [dps@lx-01 azure-bkp]$ sudo docker ps -a
 CONTAINER ID  IMAGE                                                                        COMMAND    CREATED            STATUS                PORTS   NAMES
