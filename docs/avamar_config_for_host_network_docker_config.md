@@ -1,9 +1,9 @@
 # Host config 
 
-``[dps@lx-01 azure-bkp]$ hostname -f
-**lx-01.pcalvo.local**````
+[dps@lx-01 azure-bkp]$ hostname -f
+**lx-01.pcalvo.local**
 
-[dps@lx-01 azure-bkp]$ ip a
+```[dps@lx-01 azure-bkp]$ ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
@@ -23,14 +23,14 @@
     inet6 fe80::250:56ff:fea7:9df8/64 scope link
        valid_lft forever preferred_lft forever
 
-``` Container DNS config ```
+## Container DNS config 
 
-[dps@lx-01 azure-bkp]$ nslookup dockermg-01.pcalvo.local
+```[dps@lx-01 azure-bkp]$ nslookup dockermg-01.pcalvo.local
 Server:         192.168.10.124
 Address:        192.168.10.124#53
 
 Name:   dockermg-01.pcalvo.local
-Address: **192.168.111.210**
+Address: **192.168.111.210**```
 
 
 [dps@lx-01 azure-bkp]$ nslookup dockerpg-01.pcalvo.local
