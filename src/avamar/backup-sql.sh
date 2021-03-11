@@ -1,5 +1,5 @@
 #!/bin/bash
-# SWO Avamar script for backup in Azure POSTGRES.
+# SWO Avamar script for backup in Azure SQL.
 # Disclaimer: Based on an original Software One script
 
 version="1.0"
