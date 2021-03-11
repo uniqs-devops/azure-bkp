@@ -26,11 +26,11 @@
   },
   "datadomain": {
     "datadomainServerName": "cibp1weuaval003.shared.azure.scib.gs.corp",
-        "mountType": "nfs",
+        "mountType": "local",
         "RootBackupDir": "Backup"
   },
   "ddboosfs": {
-    "storageUnit": "PaaSbackup"
+    "storageUnit": "PassBackup"
   },
   "container": {
     "containerName": "dockermg-01.shared.azure.scib.gs.corp"

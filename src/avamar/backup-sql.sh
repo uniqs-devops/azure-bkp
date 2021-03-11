@@ -35,7 +35,7 @@ PORT_FIX=`jq '.fixValues[] | select(.type=="port")|.value' $ConfigDir/dps-setup.
 DATABASE_FIX=`jq '.fixValues[] | select(.type=="database")|.value' $ConfigDir/dps-setup.json | sed 's/"//g'`
 TASK_FIX=`jq '.fixValues[] | select(.type=="task")|.value' $ConfigDir/dps-setup.json | sed 's/"//g'`
 SECRET_FIX=`jq '.fixValues[] | select(.type=="secret")|.value' $ConfigDir/dps-setup.json | sed 's/"//g'`
-RESOURCES=`jq '.azureResources[] | select(.type=="MG" and .resourceType != null)|.resourceType' $ConfigDir/dps-setup.json | sed 's/"//g'`
+RESOURCES=`jq '.azureResources[] | select(.type=="SQL" and .resourceType != null)|.resourceType' $ConfigDir/dps-setup.json | sed 's/"//g'`
 TENANID=`cat $ConfigDir/dps-setup.json  | jq -r '.tenantId'`
 MOUNTTYPE=`cat $ConfigDir/dps-setup.json  | jq -r '.datadomain.mountType'`
 RESOURCEGROUP=`cat $ConfigDir/dps-setup.json  | jq -r '.resourceGroup'`
@@ -67,7 +67,7 @@ if [ -f ${ConfigDir}/swoconfig ]; then rm -rf ${ConfigDir}/swoconfig; fi
 echo
 echo "*********************************** SEARCHING cloud resources **************************************"
 echo
-az resource list  --resource-type Microsoft.Sql/servers/databases -o table | tail -n +3 | awk {'print $1'} | awk -F/ '{print $1}' > ${ConfigDir}/swoconfig
+az resource list  --resource-type Microsoft.Sql/servers/databases -o table | tail -n +3 | awk {'print $1'} | awk -F/ '{print $1}' | sort -u  > ${ConfigDir}/swoconfig
 
 cat ${ConfigDir}/swoconfig | while read linea
 do
@@ -78,23 +78,23 @@ do
                         username=${tags[2]}
                         task=${tags[0]}
                         secret=${tags[0]}
-                        #if [ ${tags[1]} = "*" ]; then
-                        #        dbs=(`az cosmosdb list --resource-group $RESOURCEGROUP | jq -r '.[].name'`)
-                        #else
-                        #        dbs=(${tags[1]})
-                        #fi
+                        if [ ${tags[1]} = "*" ]; then
+                                dbs=(`az sql db list --resource-group $RESOURCEGROUP --server $1 | jq -r '.[].name'`)
+                        else
+                                dbs=(${tags[1]})
+                        fi
                 else
-                        accounts=(`az cosmosdb list --resource-group $RESOURCEGROUP | jq -r '.[].name'`)
+                        dbs=(`az sql db list --resource-group $RESOURCEGROUP --server $1 | jq -r '.[].name'`)
                         username=$USER_FIX
                         task=$TASK_FIX
                         secret=$SECRET_FIX
                         port=$PORT_FIX
                 fi
-                if [ $USEFQDN = "NO"`awk -F/ '{print $1}' $1` ]; then
+                if [ $USEFQDN = "NO" ]; then
                         server=$(nslookup "$1"".database.windows.net" | awk -F':' '/^Address: / { matched = 1 } matched { print $2}' | xargs)
                         [[ -z "$server" ]] && echo Server Name to IP translate fail || echo IP for server "$1" is "$server"
                 else
-                        server=`awk -F/ '{print $1}' $1`.database.windows.net
+                        server=$1.database.windows.net
                 fi
                 ERROR=0
                 echo !!!!! Processing token from Keyvault !!!!!
@@ -113,17 +113,17 @@ do
                         break
                 fi
                 pass=$(echo $response | python3 -c 'import sys, json; print (json.load(sys.stdin)["value"])')
-                for account in ${accounts[@]}; do
-						sqlpackage /Action:Export /ssn:tcp:$server,$port /sdn:`awk -F/ '{print $2}' $1` /su:$username /sp:$pass /tf:sqldump.bacpac
+                for db in ${dbs[@]}; do
+                        sqlpackage /Action:Export /ssn:tcp:$server,$port /sdn:$db /su:$username /sp:$pass /tf:${BackupDir}/$server.$db.$task.$(date +%Y%m%d%H).bacpac
                         if [ "$?" != "0" ] ; then
                                 echo "******************** ERROR 009: Wrong Data in Config file $task, EXIT *********************"
                                 ERROR=9
                                 break
                         fi
-                        echo !!!!! Running  process  $task Account $account Data Base  $db !!!!!
+                        echo !!!!! Finishing  process  $task Account $account Data Base  $db !!!!!
                         echo
-                        echo !!!!! Folder size !!!!!
-                                                        du  ${BackupDir}/$server.$db.$task.$(date +%Y%m%d%H)*
+                        echo !!!!! File size !!!!!
+                             ls -lh  ${BackupDir}/$server.$db.$task.$(date +%Y%m%d%H)*
                         echo
                         #done
                 done

@@ -1,8 +1,8 @@
 {
   "cloudProvider": "azure",
-  "dockerType": "postgresql",
-  "dockerTypeName": "PG",
-  "keyVaultName": "keyvaultautoproxyrg01",
+  "dockerType": "sql",
+  "dockerTypeName": "SQL",
+  "keyVaultName": "keyvaultautoproxyrg",
   "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
   "resourceGroup": "AutoProxyRG",
   "useTags": "NO",
@@ -18,12 +18,11 @@
     "certFile": "ca-proxy_threatpulse_net"
   },
   "avamar": {
-    "useAvamar": "YES",
-    "avamarServerName": "ave-03.pcalvo.local",
+    "useAvamar": "NO",
+    "avamarServerName": "cibp1weuaval001.shared.azure.scib.gs.corp",
         "avamarDomain": "clients",
         "installDir": "dockerclient",
-        "avamarVersion": "19.3",
-	"avamarClientPort": "28003"
+        "avamarVersion": "19.3"
   },
   "datadomain": {
     "datadomainServerName": "cibp1weuaval003.shared.azure.scib.gs.corp",
@@ -34,12 +33,12 @@
     "storageUnit": "PassBackup"
   },
   "container": {
-    "containerName": "dockerpg-01.pcalvo.local"
+    "containerName": "dockermg-01.shared.azure.scib.gs.corp"
   },
   "azureResources": [
     {
-      "type": "PG",
-      "resourceType": "Microsoft.DBforPostgreSQL/servers"
+      "type": "SQL",
+      "resourceType": "Microsoft.Sql/servers/databases"
     },
     {
       "type": "PG",
@@ -79,7 +78,7 @@
     },
     {
       "type": "port",
-      "value": "5432"
+      "value": "1433"
     },
     {
       "type": "database",
@@ -87,11 +86,11 @@
     },
     {
       "type": "task",
-      "value": "postgresql"
+      "value": "sql"
     },
     {
       "type": "secret",
-      "value": "mongodbsecret"
+      "value": "sqlsecret"
     }
   ]
 }
