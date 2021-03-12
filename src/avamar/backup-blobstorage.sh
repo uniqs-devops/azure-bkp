@@ -68,7 +68,6 @@ echo
 echo "*********************************** SEARCHING cloud resources **************************************"
 echo
 az storage account list --query "[].{name:name}" --output tsv > ${ConfigDir}/swoconfig
-set -x
 cat ${ConfigDir}/swoconfig | while read linea
 do
         set -a $linea " "
@@ -82,6 +81,10 @@ do
                         server=$1.postgres.database.azure.com
                 fi
                 ERROR=0
+                username=$USER_FIX
+                task=$TASK_FIX
+                secret=$SECRET_FIX
+                port=$PORT_FIX
                 echo !!!!! Processing token from Keyvault !!!!!
                 response=$(curl 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fvault.azure.net' -H Metadata:true -s)
                 if [ ${response:2:5} == "error" ]; then
@@ -98,27 +101,25 @@ do
                         break
                 fi
                 pass=$(echo $response | python3 -c 'import sys, json; print (json.load(sys.stdin)["value"])')
-                pass="ehGzfUWsxL8n5S5IsXV8ws5sLz0RTOy23yWUFv6R9Cz0k1UgVb+0f+i00k91oWXDvULG+diX9Ri0Vz+LBg29lg=="
                 for container in ${containers[@]}; do
                         echo !!!!! Running process  $1 Storage Account $3 !!!!!
                         echo "accountName ${1}" > ${ConfigDir}/${container}
                         echo "accountKey ${pass}" >> ${ConfigDir}/${container}
                         echo "containerName $container" >> ${ConfigDir}/${container}
-                        set -x
                         if [ ! -d ${ServiceBackupDir}/${container} ]; then mkdir ${ServiceBackupDir}/${container}; fi
-                        echo blobfuse ${ServiceBackupDir}/${container} --tmp-path=${ServiceBackupDir}/${container}/blobfusetmp  -o attr_timeout=240 -o negative_timeout=120 --config-file=${ConfigDir}/${container} --log-level=LOG_DEBUG --file-cache-timeout-in-seconds=120 -o ro -o nonempty
+                        #echo blobfuse ${ServiceBackupDir}/${container} --tmp-path=/tmp/blobfusetmp.${container}  -o attr_timeout=240 -o negative_timeout=120 --config-file=${ConfigDir}/${container} --log-level=LOG_DEBUG --file-cache-timeout-in-seconds=120 -o ro -o nonempty
                         mountpoint -q ${ServiceBackupDir}/${container}
                         if [ "$?" == "1" ]; then
-                                timeout 60s blobfuse ${ServiceBackupDir}/${container} --tmp-path=${ServiceBackupDir}/${container}/blobfusetmp  -o attr_timeout=240 -o negative_timeout=120 --config-file=${ConfigDir}/${container} --log-level=LOG_DEBUG --file-cache-timeout-in-seconds=120 -o ro -o nonempty
+                           timeout 60s blobfuse ${ServiceBackupDir}/${container} --tmp-path=/tmp/blobfusetmp.${container} -o attr_timeout=240 -o negative_timeout=120 --config-file=${ConfigDir}/${container} --log-level=LOG_DEBUG --file-cache-timeout-in-seconds=120 -o ro -o nonempty
                         fi
                         if [ "$?" != "0" ]; then
                                 echo "************************* ERROR 010: Unable to Mount. Check Data in Config file DATALAKE, EXIT *************************"
                                 break
                         fi
-                        echo !!!!! Running  process  $task blog account  $blob !!!!!
+                        echo !!!!! $task blog fuse mountof  container ${container} of account $blob !!!!!
                         echo
-                        echo !!!!! File size !!!!!
-                        ls -lh ${BackupDir} | tail -1 |  awk {'print " File size: "$5 " / File Name: "$9'}
+                        echo !!!!! Container size !!!!!
+                        du -hs ${ServiceBackupDir}/${container}
                         echo
                 done
         fi
