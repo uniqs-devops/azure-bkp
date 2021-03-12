@@ -3,7 +3,7 @@ COPY src/packages/DockerEmbebed/avamar/DUMMYVERSION/AvamarClient-linux-sles11-x8
 # Install avamar client usen RPM as Install Guide procedure
 RUN rpm -ivh --relocate /usr/local/avamar=/DUMMYINSTALLDIR  /tmp/AvamarClient-linux-sles11-x86_64-DUMMYVERSION.*.rpm
 #Copy .avagent file
-COPY src/avamar/.avagent /DUMMYINSTALLDIR
+COPY src/avamar/.avagent /DUMMYINSTALLDIR/var
 # Avamar Client inbond ports
 EXPOSE PORT
 EXPOSE 30001
