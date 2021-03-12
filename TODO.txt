@@ -16,3 +16,5 @@ Spanish
 - Verificar si corriendo una nueva instancia del contenedor se pueden reconfigurar los clientes de Avamar y Postgres
 
 - Creo que deben contemplarse los 5 flavors de MongoDB
+
+- En el caso de un contenedor blobstorage poner --privileged en el docker run
