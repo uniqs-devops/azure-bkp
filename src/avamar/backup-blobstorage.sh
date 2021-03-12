@@ -67,28 +67,14 @@ if [ -f ${ConfigDir}/swoconfig ]; then rm -rf ${ConfigDir}/swoconfig; fi
 echo
 echo "*********************************** SEARCHING cloud resources **************************************"
 echo
-az resource list  --resource-type $RESOURCES  --resource-group $RESOURCEGROUP -o table | tail -n +3 | awk {'print $1'} > ${ConfigDir}/swoconfig
-
+az storage account list --query "[].{name:name}" --output tsv > ${ConfigDir}/swoconfig
+set -x
 cat ${ConfigDir}/swoconfig | while read linea
 do
         set -a $linea " "
         if [ "${1::1}" != "#" ] ; then
-                if [ $USETAGS = "YES" ]; then
-                        tags=(`az resource list --name $1 | jq '.[].tags | [."'"$TASK_TAG"'",."'"$DATABASE_TAG"'",."'"$USER_TAG"'",."'"$SECRET_TAG"'",."'"$PORT_TAG"'"]' | sed 's/"//g' | sed 's/,//g' | sed 's/\]//g' | sed 's/\[//g' | paste -sd " "`)
-                        username=${tags[2]}
-                        task=${tags[0]}
-                        secret=${tags[0]}
-                        if [ ${tags[1]} = "*" ]; then
-                                blobls=(`az postgres db list  --resource-group $RESOURCEGROUP --server-name $1 -o table | tail -n +3 | awk {'print $4'}`)
-                        else
-                                blobls=(${tags[1]})
-                        fi
-                else
-                        blobls=(`az postgres db list  --resource-group $RESOURCEGROUP --server-name $1 -o table | tail -n +3 | awk {'print $4'} | grep -v azure_maintenance | grep -v azure_sys`)
-                        username=$USER_FIX
-                        task=$TASK_FIX
-                        secret=$SECRET_FIX
-                fi
+                key="$(az storage account keys list -n $1 --query "[0].{value:value}" --output tsv)"
+                containers="$(az storage container list --account-name $1 --account-key $key --query "[].{name:name}" --output tsv)"
                 if [ $USEFQDN = "NO" ]; then
                         server=$(nslookup "$1"".postgres.database.azure.com" | awk -F':' '/^Address: / { matched = 1 } matched { print $2}' | xargs)
                         [[ -z "$server" ]] && echo Server Name to IP translate fail || echo IP for server "$1" is "$server"
@@ -112,15 +98,18 @@ do
                         break
                 fi
                 pass=$(echo $response | python3 -c 'import sys, json; print (json.load(sys.stdin)["value"])')
-                for blob in ${blobls[@]}; do
+                pass="ehGzfUWsxL8n5S5IsXV8ws5sLz0RTOy23yWUFv6R9Cz0k1UgVb+0f+i00k91oWXDvULG+diX9Ri0Vz+LBg29lg=="
+                for container in ${containers[@]}; do
                         echo !!!!! Running process  $1 Storage Account $3 !!!!!
-                        echo "accountName ${3}" > ${ConfigDir}/${4}
-                        echo "accountKey ${pass}" >> ${ConfigDir}/${4}
-                        echo "containerName ${4}" >> ${ConfigDir}/${4}
-                        echo blobfuse /mnt/Datalake/${Servicio} --tmp-path=/mnt/resource/${Servicio}/blobfusetmp  -o attr_timeout=240 -o negative_timeout=120 --config-file=${ConfigDir}/${4} --log-level=LOG_DEBUG --file-cache-timeout-in-seconds=120 -o ro -o nonempty
-                        mountpoint -q /mnt/Datalake/${Servicio}
+                        echo "accountName ${1}" > ${ConfigDir}/${container}
+                        echo "accountKey ${pass}" >> ${ConfigDir}/${container}
+                        echo "containerName $container" >> ${ConfigDir}/${container}
+                        set -x
+                        if [ ! -d ${ServiceBackupDir}/${container} ]; then mkdir ${ServiceBackupDir}/${container}; fi
+                        echo blobfuse ${ServiceBackupDir}/${container} --tmp-path=${ServiceBackupDir}/${container}/blobfusetmp  -o attr_timeout=240 -o negative_timeout=120 --config-file=${ConfigDir}/${container} --log-level=LOG_DEBUG --file-cache-timeout-in-seconds=120 -o ro -o nonempty
+                        mountpoint -q ${ServiceBackupDir}/${container}
                         if [ "$?" == "1" ]; then
-                                timeout 60s blobfuse /mnt/Datalake/${Servicio} --tmp-path=/mnt/resource/${Servicio}/blobfusetmp  -o attr_timeout=240 -o negative_timeout=120 -o entry_timeout=240 --config-file=${ConfigDir}/${4} --log-level=LOG_OFF --file-cache-timeout-in-seconds=1 -o nonempty
+                                timeout 60s blobfuse ${ServiceBackupDir}/${container} --tmp-path=${ServiceBackupDir}/${container}/blobfusetmp  -o attr_timeout=240 -o negative_timeout=120 --config-file=${ConfigDir}/${container} --log-level=LOG_DEBUG --file-cache-timeout-in-seconds=120 -o ro -o nonempty
                         fi
                         if [ "$?" != "0" ]; then
                                 echo "************************* ERROR 010: Unable to Mount. Check Data in Config file DATALAKE, EXIT *************************"

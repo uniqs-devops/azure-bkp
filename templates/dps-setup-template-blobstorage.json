@@ -2,7 +2,7 @@
   "cloudProvider": "azure",
   "dockerType": "blobstorage",
   "dockerTypeName": "BS",
-  "keyVaultName": "keyvaultautoproxyrg01",
+  "keyVaultName": "keyvaultautoproxyrg02",
   "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
   "resourceGroup": "AutoProxyRG",
   "useTags": "NO",
@@ -30,10 +30,10 @@
         "RootBackupDir": "Backup"
   },
   "ddboosfs": {
-    "storageUnit": "PaaSbackup"
+    "storageUnit": "PassBackup"
   },
   "container": {
-    "containerName": "dockermg-01.shared.azure.scib.gs.corp"
+    "containerName": "dockerbs-01.shared.azure.scib.gs.corp"
   },
   "azureResources": [
     {
@@ -90,7 +90,7 @@
     },
     {
       "type": "secret",
-      "value": "blobstoragesecret"
+      "value": "blobaccount"
     }
   ]
 }

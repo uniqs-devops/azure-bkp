@@ -1,8 +1,8 @@
 {
   "cloudProvider": "azure",
-  "dockerType": "sql",
-  "dockerTypeName": "SQL",
-  "keyVaultName": "keyvaultautoproxyrg",
+  "dockerType": "blobstorage",
+  "dockerTypeName": "BS",
+  "keyVaultName": "keyvaultautoproxyrg02",
   "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
   "resourceGroup": "AutoProxyRG",
   "useTags": "NO",
@@ -33,19 +33,19 @@
     "storageUnit": "PassBackup"
   },
   "container": {
-    "containerName": "dockermg-01.shared.azure.scib.gs.corp"
+    "containerName": "dockerbs-01.shared.azure.scib.gs.corp"
   },
   "azureResources": [
     {
-      "type": "SQL",
-      "resourceType": "Microsoft.Sql/servers/databases"
+      "type": "BS",
+      "resourceType": "Microsoft.Storage/storageAccounts"
     },
     {
-      "type": "PG",
+      "type": "BS",
       "resourceType": null
     },
     {
-      "type": "PG",
+      "type": "BS",
       "resourceType": null
     }
   ],
@@ -78,7 +78,7 @@
     },
     {
       "type": "port",
-      "value": "1433"
+      "value": "10255"
     },
     {
       "type": "database",
@@ -86,11 +86,11 @@
     },
     {
       "type": "task",
-      "value": "sql"
+      "value": "blobstorage"
     },
     {
       "type": "secret",
-      "value": "sqlsecret"
+      "value": "blobaccount"
     }
   ]
 }
