@@ -42,3 +42,7 @@
 
 - Las claves "datadomainServerName.mountType" y "datadomainServerName.RootBackupDir" deben ubicarse en el nivel superior, hay que modificar los .sh de configuracion y backup.
 
+- Cambiar $KeyVault en backup-keyvault.sh por valor aprendido de la lista
+
+  az keyvault secret backup --file ${BackupDir}/$KeyVault.$1.$(date +%Y%m%d%H%M%S).bkp --vault-name $KeyVault --name $1
+
