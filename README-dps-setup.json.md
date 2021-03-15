@@ -30,9 +30,9 @@
 - avamarVersion
 ``` Avamar version ```
 - mountType
-``` ddboostfs or nfs ```
+``` ddboostfs or local or nfs (not implemented yet) ```
 - RootBackupDir
-``` DDBoostFS or NFS mount point on container ```
+``` DDBoostFS or local mount point on container ```
 - storageUnit
 ``` Data Domain Storage Unit used to hold data ```
 - containerName
