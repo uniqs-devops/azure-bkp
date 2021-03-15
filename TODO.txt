@@ -1,22 +1,37 @@
 Spanish
 
-- "avamarDomain":  debe soportar multuples subdominios
+- "avamar": {
+    "useAvamar": null
+    "avamarServerName": null
+        "avamarDomain": "clients", 
+	
+  "avamarDomain":  debe soportar multuples subdominios, se utiliza en dps-setup.sh como AVAMAR_DOMAIN
 	Ej. "avamarDomain": "/Contenedores/PostgreSQL"
 
-- "resourceGroup": debe soportar mas de un resourceGroup
+- "resourceGroup": debe soportar mas de un resourceGroup, se utiliza en los scripts de backup
 	EJ.  "resourceGroup": "cibd1weursgglocolcrit001, cibd1weursgglocolcrit002"
-	Asume que cada resourceGroup tiene un keyVaut
+	Asumir que cada resourceGroup tiene un keyVaut o que todos los rg usan un solo keyvault
 
-- Docker build en dps-setup.sh debe aceptar esto desde una clave json del grupo "proxy" para IP y un parsing para "proxy.proxyHttpName"
+- Si "proxy": {
+    "useProxy": "YES"
+    
+    Hacer que docker build en dps-setup.sh aceptarte esto desde una clave json del grupo "proxy" para IP y un parsing para "proxy.proxyHttpName"
 
-  --add-host proxy.threatpulse.net:98.158.252.164
+    --add-host proxy.threatpulse.net:98.158.252.164
 
 - Revisar poner /tmp/ en dockerfile para instalacion de postgres
 
-- Verificar si corriendo una nueva instancia del contenedor se pueden reconfigurar los clientes de Avamar y Postgres
-
-- Creo que deben contemplarse los 5 flavors de MongoDB
+- Verificar si corriendo una nueva instancia del contenedor se pueden reconfigurar los clientes de Avamar y Postgres para distribuir una imagen.
 
 - En el caso de un contenedor blobstorage poner --privileged en el docker run
 
-- Para santander az login --service-principal --username --password --tenanid
+- Poner una clave nueva en dps-setup.json permitir dos tipos de logint
+  
+  Para santander az login --service-principal --username --password --tenanid, es decir deben p
+
+  Para otros  az login --service-principal --username http://PaaSBackup --password  --tenant 
+  
+- La clave "installDir.dockerclient" debe salir de "avamar.avamarServerName" debe ubicarse en el nivel superior, hay que modificar los .sh de configuracion y backup.
+
+- Las claves "datadomainServerName.mountType" y "datadomainServerName.RootBackupDir" deben ubicarse en el nivel superior, hay que modificar los .sh de configuracion y backup.
+
