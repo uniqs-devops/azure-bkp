@@ -33,5 +33,7 @@ Spanish
   
 - La clave "installDir.dockerclient" debe salir de "avamar.avamarServerName" debe ubicarse en el nivel superior, hay que modificar los .sh de configuracion y backup.
 
+- Revisar dps-setup.sh -d <hostname>
+
 - Las claves "datadomainServerName.mountType" y "datadomainServerName.RootBackupDir" deben ubicarse en el nivel superior, hay que modificar los .sh de configuracion y backup.
 
