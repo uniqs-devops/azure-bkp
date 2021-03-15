@@ -1,10 +1,20 @@
-This repository contains code examples for setup PostgreSQL PaaS backup in Azure.
+This repository contains code examples for setup PostgreSQL. Azure SQL, CosmoDB (MongoDB), Storage Account and Keyvault PaaS backup in Azure.
+
+# Repo layout 
+
+auxiliary_automation_procedures : Powershell script to create azure objects for test purposes.
+docs : Documents
+src/avamar/ : Avamar config files. Backup scripts
+src/azure/  : Pem file to avoid expouse password 
+src/ddboostfs/ : DDBoost FS lockbox file  
+src/dockerfiles/ : Docker file work space
+packages/AvamarServerPackages : Unused
+src/packages/DockerEmbebed/ : Packages used by dockerfiles to configure containers
 
 
-```
-How to deploy a DCI (Deploy Control Instance) (*)
+# How to deploy a DCI (Deploy Control Instance) (*)
 
-```
+
 - Deploy a standard VM (RedHat 8.1 (Ootpa) Standard_B2s)
 
 ```
