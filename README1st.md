@@ -2,6 +2,7 @@ This repository contains code examples for setup PostgreSQL. Azure SQL, CosmoDB 
 
 # Repo layout 
 
+```
 auxiliary_automation_procedures : Powershell script to create azure objects for test purposes.
 docs : Documents
 src/avamar/ : Avamar config files. Backup scripts
@@ -10,6 +11,7 @@ src/ddboostfs/ : DDBoost FS lockbox file
 src/dockerfiles/ : Docker file work space
 packages/AvamarServerPackages : Unused
 src/packages/DockerEmbebed/ : Packages used by dockerfiles to configure containers
+```
 
 
 # How to deploy a DCI (Deploy Control Instance) (*)
