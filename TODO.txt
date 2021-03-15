@@ -1,5 +1,3 @@
-Spanish
-
 # Prioridad Alta
 
 - "avamar": {
