@@ -13,6 +13,13 @@
 - "resourceGroup": debe soportar mas de un resourceGroup, se utiliza en los scripts de backup
 	EJ.  "resourceGroup": "cibd1weursgglocolcrit001, cibd1weursgglocolcrit002"
 	Asumir que cada resourceGroup tiene un keyVaut o que todos los rg usan un solo keyvault
+	
+- Deben agregarse nuevas claves json para blobstorage que permitican autocompletar el fichero de configuración
+  para montado del storage account con blobfuse, los valores a lograr son:
+  
+  	servicePrincipalClientId <id>
+	servicePrincipalClientSecret <clave>
+	servicePrincipalTenantId <tenantid>
 
 # Prioridad media
 
