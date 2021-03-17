@@ -150,7 +150,11 @@ function deploy-on-host {
     sudo docker save -o /tmp/avamar-pg.tar `sudo docker images | grep avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER | awk '{print $3}'`
     scp /tmp/avamar-pg.tar $1:/tmp
     ssh $1 sudo docker load \<\ /tmp/avamar-pg.tar
-    ssh $1 sudo docker run --hostname $CONTAINER_NAME --name  -d -it --device /dev/fuse `sudo docker images | grep avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER | awk '{print $3}'` /bin/bash
+    if [ $DOCKERTYPE = "blobstorage" ]; then
+      ssh $1 sudo docker run --hostname $CONTAINER_NAME --name  -d -it --device /dev/fuse --cap-add SYS_ADMIN  --network host --privileged `sudo docker images | grep avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER | awk '{print $3}'` /bin/bash
+    else
+      ssh $1 sudo docker run --hostname $CONTAINER_NAME --name  -d -it --device /dev/fuse --cap-add SYS_ADMIN  --network host  `sudo docker images | grep avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER | awk '{print $3}'` /bin/bash
+    fi  
     rm -f /tmp/avamar-pg.tar
     # Deploy container on Openshift or Kubernetes cluster
     # Keys must be configured before launch
