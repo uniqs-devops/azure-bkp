@@ -74,8 +74,9 @@ function prebuild {
       echo "--hostname="$CONTAINER_NAME > src/avamar/.avagent
       echo "--listenport="$PORT >> src/avamar/.avagent
       # Avamar
-      echo "/$INSTALLDIR/bin/avagent.bin --init --daemon=false --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc/ --mcsaddr=$AVAMAR_SERVER --dpndomain=/$AVAMAR_DOMAIN --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
-      echo "/$INSTALLDIR/bin/avagent.bin --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
+      echo "#/$INSTALLDIR/bin/avagent.bin --init --daemon=false --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc/ --mcsaddr=$AVAMAR_SERVER --dpndomain=/$AVAMAR_DOMAIN --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
+      echo "#/$INSTALLDIR/bin/avagent.bin --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
+      echo "/$INSTALLDIR/etc/avagent.d register $AVAMAR_SERVER /$AVAMAR_DOMAIN" >> src/avamar/setup.sh
       cat templates/Azure-template-Avamar.dockerfile >> temp.dockerfile
     else
       DockerfileName=$Dockerfolder/cron.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
@@ -100,7 +101,7 @@ function prebuild {
     echo "#CMD echo localhost localhost.localdomain $CONTAINER_NAME > /etc/hosts; supervisord -n;" >> temp.dockerfile
     # About ENTRYPOINTs
     if [ $USEAVAMAR = "YES" ]; then
-        echo "ENTRYPOINT mount -a &&  [ -f /etc/init.d/avagent ] && /etc/init.d/avagent start && /$INSTALLDIR/setup.sh && /bin/bash" >> temp.dockerfile
+        echo "ENTRYPOINT mount -a &&  [ -f /etc/init.d/avagent ] && /etc/init.d/avagent start && /bin/bash" >> temp.dockerfile
     else
         echo "ENTRYPOINT mount -a && /bin/bash" >> temp.dockerfile
     fi

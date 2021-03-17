@@ -18,9 +18,10 @@
     "certFile": "ca-proxy_threatpulse_net"
   },
   "avamar": {
-    "useAvamar": "NO",
+    "useAvamar": "YES",
+    "avamarClientPort": "28003",
     "avamarServerName": "cibp1weuaval001.shared.azure.scib.gs.corp",
-        "avamarDomain": "clients",
+        "avamarDomain": "clients/DockerContainers/DBs-Estructured",
         "installDir": "dockerclient",
         "avamarVersion": "19.3"
   },
