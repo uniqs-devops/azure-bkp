@@ -120,7 +120,7 @@ exit
 function build {
 # Docker
     environment
-    sudo docker build -t $DockerfileName:1.0 -f $DockerfileName . --network host --add-host dockermg-01.pcalvo.local:127.0.1.1 
+    sudo docker build -t $DockerfileName:1.0 -f $DockerfileName . --network host --add-host $CONTAINER_NAME::127.0.1.1 
 exit
 }
 
