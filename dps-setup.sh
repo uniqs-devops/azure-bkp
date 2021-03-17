@@ -94,7 +94,7 @@ function prebuild {
 	fi
     echo "COPY src/avamar/setup.sh /$INSTALLDIR" >> temp.dockerfile
     echo "RUN chmod 755 /$INSTALLDIR/setup.sh" >> temp.dockerfile
-    echo "#RUN /$INSTALLDIR/setup.sh" >> temp.dockerfile
+    echo "RUN /$INSTALLDIR/setup.sh" >> temp.dockerfile
     echo "# Cleanup /tmp folder, agent start  and Configuration persist" >> temp.dockerfile
     echo "RUN rm -f /tmp/*.rpm" >> temp.dockerfile
     #echo "RUN echo 127.0.1.1 $CONTAINER_NAME > /etc/hosts && wget http://$CONTAINER_NAME" >> temp.dockerfile
