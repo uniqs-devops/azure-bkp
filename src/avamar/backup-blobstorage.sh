@@ -115,7 +115,6 @@ do
 			fi
                         echo "containerName $container" >> ${ConfigDir}/${container}
                         if [ ! -d ${ServiceBackupDir}/${container} ]; then mkdir ${ServiceBackupDir}/${container}; fi
-                        #echo blobfuse ${ServiceBackupDir}/${container} --tmp-path=/tmp/blobfusetmp.${container}  -o attr_timeout=240 -o negative_timeout=120 --config-file=${ConfigDir}/${container} --log-level=LOG_DEBUG --file-cache-timeout-in-seconds=120 -o ro -o nonempty
                         mountpoint -q ${ServiceBackupDir}/${container}
                         if [ "$?" == "1" ]; then
                            timeout 60s blobfuse ${ServiceBackupDir}/${container} --tmp-path=/tmp/blobfusetmp.${container} -o attr_timeout=240 -o negative_timeout=120 --config-file=${ConfigDir}/${container} --log-level=LOG_DEBUG --file-cache-timeout-in-seconds=120 -o ro -o nonempty
