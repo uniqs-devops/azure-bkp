@@ -21,6 +21,12 @@
 ``` YES if docker file needs proxy ENV variables ```
 - cers
 ``` YES if certificate is needed ```
+- useservicePrincipal
+``` YES for SPN ```
+- servicePrincipalClientId
+``` Service principal client id```
+- servicePrincipalClientSecret
+``` Service principal client password```
 - useAvamar
 ``` Use avamar to store backup data ```
 - avamarServerName and datadomainServerName
