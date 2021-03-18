@@ -41,6 +41,9 @@ MOUNTTYPE=`cat $ConfigDir/dps-setup.json  | jq -r '.datadomain.mountType'`
 RESOURCEGROUP=`cat $ConfigDir/dps-setup.json  | jq -r '.resourceGroup'`
 USETAGS=`cat $ConfigDir/dps-setup.json  | jq -r '.useTags'`
 USEFQDN=`cat $ConfigDir/dps-setup.json  | jq -r '.useFQDN'`
+USERSERVICEPRINCIPAL=`cat $ConfigDir/dps-setup.json  | jq -r '.servicePrincipal.useServicePrincipal'`
+SERVICEPRINCIPALCLIENTID=`cat $ConfigDir/dps-setup.json  | jq -r '.servicePrincipal.servicePrincipalClientId'`
+SERVICEPRINCIPALCLIENTSECRET=`cat $ConfigDir/dps-setup.json  | jq -r '.servicePrincipal.servicePrincipalClientSecret'`
 
 # AZ Login
 az login --service-principal -u http://PaaSBackup --password $ConfigDir/azurelogin.pem --tenant $TENANID
@@ -105,9 +108,11 @@ do
                         echo !!!!! Running process  $1 Storage Account $3 !!!!!
                         echo "accountName ${1}" > ${ConfigDir}/${container}
                         echo "accountKey ${pass}" >> ${ConfigDir}/${container}
-                        echo "servicePrincipalClientId $SERVICEPRINCIPALCLIENTID" >> ${ConfigDir}/${container}
-	                echo "servicePrincipalClientSecret $SERVICEPRINCIPALCLIENTSECRET" >> ${ConfigDir}/${container}
-	                echo "servicePrincipalTenantId $TENANID" >> ${ConfigDir}/${container}
+			if [ USERSERVICEPRINCIPAL = "YES"; then
+                        	echo "servicePrincipalClientId $SERVICEPRINCIPALCLIENTID" >> ${ConfigDir}/${container}
+	               		echo "servicePrincipalClientSecret $SERVICEPRINCIPALCLIENTSECRET" >> ${ConfigDir}/${container}
+	                	echo "servicePrincipalTenantId $TENANID" >> ${ConfigDir}/${container}
+			fi
                         echo "containerName $container" >> ${ConfigDir}/${container}
                         if [ ! -d ${ServiceBackupDir}/${container} ]; then mkdir ${ServiceBackupDir}/${container}; fi
                         #echo blobfuse ${ServiceBackupDir}/${container} --tmp-path=/tmp/blobfusetmp.${container}  -o attr_timeout=240 -o negative_timeout=120 --config-file=${ConfigDir}/${container} --log-level=LOG_DEBUG --file-cache-timeout-in-seconds=120 -o ro -o nonempty
