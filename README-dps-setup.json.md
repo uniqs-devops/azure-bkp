@@ -21,7 +21,7 @@
 ``` YES if docker file needs proxy ENV variables ```
 - cers
 ``` YES if certificate is needed ```
-- useservicePrincipal
+- useServicePrincipal
 ``` YES for SPN ```
 - servicePrincipalClientId
 ``` Service principal client id```
