@@ -105,6 +105,9 @@ do
                         echo !!!!! Running process  $1 Storage Account $3 !!!!!
                         echo "accountName ${1}" > ${ConfigDir}/${container}
                         echo "accountKey ${pass}" >> ${ConfigDir}/${container}
+                        echo "servicePrincipalClientId $SERVICEPRINCIPALCLIENTID" >> ${ConfigDir}/${container}
+	                echo "servicePrincipalClientSecret $SERVICEPRINCIPALCLIENTSECRET" >> ${ConfigDir}/${container}
+	                echo "servicePrincipalTenantId $TENANID" >> ${ConfigDir}/${container}
                         echo "containerName $container" >> ${ConfigDir}/${container}
                         if [ ! -d ${ServiceBackupDir}/${container} ]; then mkdir ${ServiceBackupDir}/${container}; fi
                         #echo blobfuse ${ServiceBackupDir}/${container} --tmp-path=/tmp/blobfusetmp.${container}  -o attr_timeout=240 -o negative_timeout=120 --config-file=${ConfigDir}/${container} --log-level=LOG_DEBUG --file-cache-timeout-in-seconds=120 -o ro -o nonempty
