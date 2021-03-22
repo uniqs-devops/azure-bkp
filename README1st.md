@@ -28,7 +28,6 @@ src/packages/DockerEmbebed/ : Packages used by dockerfiles to configure containe
 
 - Deploy a standard VM (RedHat 8.1 (Ootpa) Standard_B2s)
 
-```
 (*) DCI is used to create docker images, IS NOT used to run docker containers
 
 How to install this repo:
