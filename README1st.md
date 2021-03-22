@@ -28,7 +28,6 @@ src/packages/DockerEmbebed/ : Packages used by dockerfiles to configure containe
 
 - Deploy a standard VM (RedHat 8.1 (Ootpa) Standard_B2s)
 
-```
 (*) DCI is used to create docker images, IS NOT used to run docker containers
 
 How to install this repo:
@@ -96,3 +95,13 @@ Deployment sequence (from DCI):
    
 6) Configure an Avamar policy backup as usual.
 
+
+
+# Access requirements
+```
+1) KeyVault backup. 
+	Access policies / Secret Permissions / Get-List-Backup-Restore for Service Principal or user.
+2) Blobstorage backup
+	Acess control (AIM) / Role assignments / Storage Account Contributor for Service Principal or user.
+	Networking / Firewall / Address range for container IP address
+```
