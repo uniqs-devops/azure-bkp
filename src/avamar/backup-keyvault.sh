@@ -4,18 +4,22 @@
 
 version="1.0"
 
-ConfigDir=/home/dps/uniqs-dps
+ConfigDir=/dockerclient
 SERVICE_TYPE=`cat $ConfigDir/dps-setup.json  | jq -r '.dockerType'`
-KeyVault=`cat $ConfigDir/dps-setup.json  | jq -r '.keyVaultName'`
+LogDir=$ConfigDir/var
 RESOURCEGROUP=`cat $ConfigDir/dps-setup.json  | jq -r '.resourceGroup'`
 RootBackupDir=/`cat $ConfigDir/dps-setup.json  | jq -r '.datadomain.RootBackupDir'`
 ServiceBackupDir=${RootBackupDir}/$SERVICE_TYPE
 BackupDir=${ServiceBackupDir}/backups
 TENANID=`cat $ConfigDir/dps-setup.json  | jq -r '.tenantId'`
 MOUNTTYPE=`cat $ConfigDir/dps-setup.json  | jq -r '.datadomain.mountType'`
+LogFile=${LogDir}/${SERVICE_TYPE}_`date +%Y%m%d.%T`.log
+ERROR=1
+[ ! -d $LogDir ] && mkdir $LogDir
+exec &>> >(tee -a $LogFile)
 
 # AZ Login
-###az login --service-principal -u http://PaaSBackup --password $ConfigDir/azurelogin.pem --tenant $TENANID
+az login --service-principal -u http://PaaSBackup --password $ConfigDir/azurelogin.pem --tenant $TENANID
 
 if [ ! -d $RootBackupDir ]; then mkdir mkdir ${RootBackupDir}; fi
 if [ ! -d ${RootBackupDir} ]; then mkdir ${RootBackupDir}; fi
@@ -37,18 +41,21 @@ echo !!!!! Processing config file !!!!!
 echo
 if [ -f ${ConfigDir}/secret.list ]; then rm -rf ${ConfigDir}/secret.list; fi
 
-az keyvault secret list --vault-name `az keyvault list --resource-group $RESOURCEGROUP -o table | tail -n +3 | awk {'print $2'}` | jq '.[].name' | sed 's/"//g' > ${ConfigDir}/secret.list
-
 echo
 echo "*********************************** SEARCHING cloud resources **************************************"
 echo
-
-set -x
-cat ${ConfigDir}/secret.list | while read linea
+for keyvault in `az keyvault list --resource-group $RESOURCEGROUP -o table | tail -n +3 | awk {'print $2'}`
 do
-        set -a $linea " "
-        az keyvault secret backup --file ${BackupDir}/$KeyVault.$1.$(date +%Y%m%d%H%M%S).bkp --vault-name $KeyVault --name $1
+	az keyvault secret list --vault-name $keyvault -o table | tail -n +3 |  sed 's/"//g' > ${ConfigDir}/secret.list
+	cat ${ConfigDir}/secret.list | while read linea
+	do
+        	set -a $linea " "
+		echo
+		echo "***************************** Backup of secret $1 of KeyVault $keyvault *********************************"
+		az keyvault secret backup --file ${BackupDir}/$keyvault.$1.$(date +%Y%m%d%H%M%S).bkp --vault-name $keyvault --name $1
+	done
 done
+
 
 if [ $? != "0" ] || [ $? != "1" ]; then
 	echo -e "\n"
@@ -61,7 +68,7 @@ else
 	echo "*********************************** FINISHED swobackup.sh ver ${version} ************************************"
 fi
 # Logout
-###az logout
+az logout
 
 
 

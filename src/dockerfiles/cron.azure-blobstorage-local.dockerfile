@@ -17,10 +17,10 @@ RUN yum install -y /tmp/azure-cli-*.x86_64.rpm
 # json file
 COPY dps-setup.json /dockerclient
 
-# Copy MongoDB repo install package
+# Copy blobfuse repo install package
 COPY src/packages/DockerEmbebed/blobstorage/boost-*.rpm /tmp/
 COPY src/packages/DockerEmbebed/blobstorage/blobfuse-*-x86_64.rpm /tmp/
-# Install MongoDB client 
+# Install blobfuse client 
 RUN yum install -y /tmp/boost-*.rpm
 RUN yum install -y /tmp/blobfuse-*-x86_64.rpm
 # Copy  backup script
@@ -28,8 +28,8 @@ COPY src/avamar/backup-blobstorage.sh /dockerclient/etc/scripts
 RUN chmod 755 /dockerclient/etc/scripts/backup-blobstorage.sh
 COPY src/avamar/setup.sh /dockerclient
 RUN chmod 755 /dockerclient/setup.sh
-#RUN /dockerclient/setup.sh
+RUN /dockerclient/setup.sh
 # Cleanup /tmp folder, agent start  and Configuration persist
 RUN rm -f /tmp/*.rpm
-#CMD echo localhost localhost.localdomain dockerbs-01.shared.azure.scib.gs.corp > /etc/hosts; supervisord -n;
+#CMD echo localhost localhost.localdomain dockerbs-01.pcalvo.local > /etc/hosts; supervisord -n;
 ENTRYPOINT mount -a && /bin/bash

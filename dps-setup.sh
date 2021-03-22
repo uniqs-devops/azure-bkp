@@ -82,9 +82,9 @@ function prebuild {
       DockerfileName=$Dockerfolder/cron.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
       echo "echo '00 09 * * 1-5 /$INSTALLDIR/etc/scripts/backup-$DOCKERTYPE.sh' >> /var/spool/cron/root" >> src/avamar/setup.sh
     fi
-    if [ $DOCKERTYPE != "keyvault" ]; then
+    ##if [ $DOCKERTYPE != "keyvault" ]; then
     	cat templates/Azure-template-$DOCKERTYPE.dockerfile >> temp.dockerfile
-    fi
+    ##fi
     if [ $MOUNTTYPE = "ddboostfs" ]; then
         # Ddboostfs & Lockbox
           sudo /opt/emc/boostfs/bin/boostfs lockbox add-hosts $CONTAINER_NAME;  cp /opt/emc/boostfs/lockbox/boostfs.lockbox  src/ddboostfs/boostfs.lockbox

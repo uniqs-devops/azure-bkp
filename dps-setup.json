@@ -1,8 +1,8 @@
 {
   "cloudProvider": "azure",
-  "dockerType": "blobstorage",
-  "dockerTypeName": "BS",
-  "keyVaultName": "keyvaultautoproxyrg02",
+  "dockerType": "keyvault",
+  "dockerTypeName": "KV",
+  "keyVaultName": null,
   "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
   "resourceGroup": "AutoProxyRG",
   "useTags": "NO",
@@ -23,7 +23,7 @@
     "servicePrincipalClientSecret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
   },
   "avamar": {
-    "useAvamar": "YES",
+    "useAvamar": "NO",
     "avamarClientPort": "28003",
     "avamarServerName": "ave-03.pcalvo.local",
         "avamarDomain": "clients/DockerContainers/DBs-Estructured",
@@ -92,11 +92,11 @@
     },
     {
       "type": "task",
-      "value": "blobstorage"
+      "value": "keyvault"
     },
     {
       "type": "secret",
-      "value": "blobaccount"
+      "value": null
     }
   ]
 }
