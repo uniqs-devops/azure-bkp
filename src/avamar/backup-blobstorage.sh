@@ -127,7 +127,6 @@ do
                         echo
                         echo !!!!! Container size !!!!!
                         du -hs ${ServiceBackupDir}/$1/${container}
-                        ls -l  ${ServiceBackupDir}/$1/${container}
                         echo
                 done
         fi

@@ -3,6 +3,8 @@
 - "resourceGroup": debe soportar mas de un resourceGroup, se utiliza en los scripts de backup
 	EJ.  "resourceGroup": "cibd1weursgglocolcrit001, cibd1weursgglocolcrit002"
 	Asumir que cada resourceGroup tiene un keyVaut o que todos los rg usan un solo keyvault
+
+- En el caso de Storage Account cada una crea un access key nueva, debemos tener multiples json key
 	
 
 # Prioridad media
