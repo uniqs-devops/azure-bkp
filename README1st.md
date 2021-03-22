@@ -96,3 +96,12 @@ Deployment sequence (from DCI):
    
 6) Configure an Avamar policy backup as usual.
 
+
+
+# Access requirements
+
+1) KeyVault backup. 
+	Access policies / Secret Permissions / Get-List-Backup-Restore for Service Principal or user.
+2) Blobstorage backup
+	Acess control (AIM) / Role assignments / Storage Account Contributor for Service Principal or user.
+	Networking / Firewall / Address range for container IP address
