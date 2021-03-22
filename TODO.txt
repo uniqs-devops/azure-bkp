@@ -41,5 +41,7 @@
   https://github.com/Azure/azure-cosmos-python/
   https://github.com/Azure/azure-sdk-for-python
   https://docs.microsoft.com/en-us/samples/azure/azure-sdk-for-python/cosmos-db-samples/
+  https://docs.microsoft.com/es-es/azure/cosmos-db/sql-query-getting-started
+  https://docs.microsoft.com/es-es/azure/cosmos-db/account-databases-containers-items 
   
 
