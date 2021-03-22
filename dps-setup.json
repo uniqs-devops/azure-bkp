@@ -1,17 +1,17 @@
 {
   "cloudProvider": "azure",
-  "dockerType": "blobstorage",
-  "dockerTypeName": "BS",
-  "keyVaultName": "keyvaultautoproxyrg03 ",
-  "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
-  "resourceGroup": "AutoProxyRG",
+  "dockerType": "mysql",
+  "dockerTypeName": "MS",
+  "keyVaultName": "cibd1weuakvglocolcrit001",
+  "tenantId": "35595a02-4d6d-44ac-99e1-f9ab4cd872db",
+  "resourceGroup": "cibd1weursgglocolcrit001",
   "useTags": "NO",
-  "useFQDN": "YES",
+  "useFQDN": "NO",
   "proxy": {
     "useProxy": "NO",
-    "proxyHttpName": "http://127.0.0.1:3001",
-    "proxyHttpsName": "https://127.0.0.1:3001",
-    "noProxy": "*.test.example.com,.example2.com"
+    "proxyHttpName": "http://proxy.threatpulse.net:8080",
+    "proxyHttpsName": "https://proxy.threatpulse.net:8080",
+    "noProxy": "cloudcenter.corp,nngg.corp,gsnetcloud.corp,localhost"
   },
   "certs": {
     "useCerts": "NO",
@@ -30,22 +30,22 @@
         "RootBackupDir": "Backup"
   },
   "ddboosfs": {
-    "storageUnit": "PassBackup"
+    "storageUnit": "PaasBackup"
   },
   "container": {
-    "containerName": "dockerbs-01.shared.azure.scib.gs.corp"
+    "containerName": "dockerms-01.shared.azure.scib.gs.corp"
   },
   "azureResources": [
     {
-      "type": "BS",
-      "resourceType": "Microsoft.Storage/storageAccounts"
+      "type": "MS",
+      "resourceType": "Microsoft.DBforMySQL/servers"
     },
     {
-      "type": "BS",
+      "type": "MS",
       "resourceType": null
     },
     {
-      "type": "BS",
+      "type": "MS",
       "resourceType": null
     }
   ],
@@ -74,11 +74,11 @@
     "fixValues": [
     {
       "type": "user",
-      "value": "dps"
+      "value": "avamar-backup"
     },
     {
       "type": "port",
-      "value": "10255"
+      "value": "5432"
     },
     {
       "type": "database",
@@ -86,11 +86,11 @@
     },
     {
       "type": "task",
-      "value": "blobstorage"
+      "value": "mysql"
     },
     {
       "type": "secret",
-      "value": "keystorage"
+      "value": "avamar-backup-cibd1weuapsglocolcrit001"
     }
   ]
 }
