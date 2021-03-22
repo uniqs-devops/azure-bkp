@@ -108,7 +108,7 @@ do
                         echo !!!!! Running process  $1 Storage Account $3 !!!!!
                         echo "accountName ${1}" > ${ConfigDir}/${container}
                         echo "accountKey ${pass}" >> ${ConfigDir}/${container}
-			if [ USERSERVICEPRINCIPAL = "YES"; then
+			if [ $USERSERVICEPRINCIPAL = "YES" ]; then
                         	echo "servicePrincipalClientId $SERVICEPRINCIPALCLIENTID" >> ${ConfigDir}/${container}
 	               		echo "servicePrincipalClientSecret $SERVICEPRINCIPALCLIENTSECRET" >> ${ConfigDir}/${container}
 	                	echo "servicePrincipalTenantId $TENANID" >> ${ConfigDir}/${container}
@@ -123,7 +123,7 @@ do
                                 echo "************************* ERROR 010: Unable to Mount. Check Data in Config file DATALAKE, EXIT *************************"
                                 break
                         fi
-                        echo !!!!! $task blog fuse mountof  container ${container} of account $blob !!!!!
+                        echo !!!!! $task blog fuse mount of container ${container} of account $blob !!!!!
                         echo
                         echo !!!!! Container size !!!!!
                         du -hs ${ServiceBackupDir}/${container}

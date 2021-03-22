@@ -1,25 +1,9 @@
 # Prioridad Alta
 
-- "avamar": {
-    "useAvamar": null
-    "avamarServerName": null
-        "avamarDomain": "clients", 
-	
-  "avamarDomain":  debe soportar multuples subdominios, se utiliza en dps-setup.sh como AVAMAR_DOMAIN
-	Ej. "avamarDomain": "/Contenedores/PostgreSQL"
-	
-- En el caso de un contenedor blobstorage poner --privileged en el docker run
-
 - "resourceGroup": debe soportar mas de un resourceGroup, se utiliza en los scripts de backup
 	EJ.  "resourceGroup": "cibd1weursgglocolcrit001, cibd1weursgglocolcrit002"
 	Asumir que cada resourceGroup tiene un keyVaut o que todos los rg usan un solo keyvault
 	
-- Deben agregarse nuevas claves json para blobstorage que permitican autocompletar el fichero de configuración
-  para montado del storage account con blobfuse, los valores a lograr son:
-  
-  	servicePrincipalClientId <id>
-	servicePrincipalClientSecret <clave>
-	servicePrincipalTenantId <tenantid>
 
 # Prioridad media
 
@@ -52,4 +36,12 @@
 - Cambiar $KeyVault en backup-keyvault.sh por valor aprendido de la lista
 
   az keyvault secret backup --file ${BackupDir}/$KeyVault.$1.$(date +%Y%m%d%H%M%S).bkp --vault-name $KeyVault --name $1
+  
+- Desarrollar modulo de python para evitar Azure Data Factory, referencias
+  https://github.com/Azure/azure-cosmos-python/
+  https://github.com/Azure/azure-sdk-for-python
+  https://docs.microsoft.com/en-us/samples/azure/azure-sdk-for-python/cosmos-db-samples/
+  https://docs.microsoft.com/es-es/azure/cosmos-db/sql-query-getting-started
+  https://docs.microsoft.com/es-es/azure/cosmos-db/account-databases-containers-items 
+  
 
