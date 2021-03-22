@@ -1,8 +1,8 @@
 {
   "cloudProvider": "azure",
-  "dockerType": "keyvault",
-  "dockerTypeName": "KV",
-  "keyVaultName": null,
+  "dockerType": "blobstorage",
+  "dockerTypeName": "BS",
+  "keyVaultName": "keyvaultautoproxyrg03 ",
   "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
   "resourceGroup": "AutoProxyRG",
   "useTags": "NO",
@@ -17,21 +17,15 @@
     "useCerts": "NO",
     "certFile": "ca-proxy_threatpulse_net"
   },
-  "servicePrincipal": {
-    "useServicePrincipal": "NO",
-    "servicePrincipalClientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-    "servicePrincipalClientSecret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-  },
   "avamar": {
     "useAvamar": "NO",
-    "avamarClientPort": "28003",
-    "avamarServerName": "ave-03.pcalvo.local",
-        "avamarDomain": "clients/DockerContainers/DBs-Estructured",
+    "avamarServerName": "cibp1weuaval001.shared.azure.scib.gs.corp",
+        "avamarDomain": "clients",
         "installDir": "dockerclient",
         "avamarVersion": "19.3"
   },
   "datadomain": {
-    "datadomainServerName": "dd-03.pcalvo.local",
+    "datadomainServerName": "cibp1weuaval003.shared.azure.scib.gs.corp",
         "mountType": "local",
         "RootBackupDir": "Backup"
   },
@@ -39,7 +33,7 @@
     "storageUnit": "PassBackup"
   },
   "container": {
-    "containerName": "dockerbs-01.pcalvo.local"
+    "containerName": "dockerbs-01.shared.azure.scib.gs.corp"
   },
   "azureResources": [
     {
@@ -92,11 +86,11 @@
     },
     {
       "type": "task",
-      "value": "keyvault"
+      "value": "blobstorage"
     },
     {
       "type": "secret",
-      "value": null
+      "value": "keystorage"
     }
   ]
 }

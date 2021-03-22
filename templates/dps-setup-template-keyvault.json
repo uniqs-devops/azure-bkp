@@ -2,7 +2,7 @@
   "cloudProvider": "azure",
   "dockerType": "keyvault",
   "dockerTypeName": "KV",
-  "keyVaultName": "leyvault01",
+  "keyVaultName": null,
   "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
   "resourceGroup": "AutoProxyRG",
   "useTags": "NO",
@@ -17,35 +17,41 @@
     "useCerts": "NO",
     "certFile": "ca-proxy_threatpulse_net"
   },
+  "servicePrincipal": {
+    "useServicePrincipal": "NO",
+    "servicePrincipalClientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "servicePrincipalClientSecret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
   "avamar": {
     "useAvamar": "NO",
-    "avamarServerName": "cibp1weuaval001.shared.azure.scib.gs.corp",
-        "avamarDomain": "clients",
+    "avamarClientPort": "28003",
+    "avamarServerName": "ave-03.pcalvo.local",
+        "avamarDomain": "clients/DockerContainers/DBs-Estructured",
         "installDir": "dockerclient",
         "avamarVersion": "19.3"
   },
   "datadomain": {
-    "datadomainServerName": "cibp1weuaval003.shared.azure.scib.gs.corp",
+    "datadomainServerName": "dd-03.pcalvo.local",
         "mountType": "local",
         "RootBackupDir": "Backup"
   },
   "ddboosfs": {
-    "storageUnit": "PaaSbackup"
+    "storageUnit": "PassBackup"
   },
   "container": {
-    "containerName": "dockermg-01.shared.azure.scib.gs.corp"
+    "containerName": "dockerbs-01.pcalvo.local"
   },
   "azureResources": [
     {
-      "type": "KV",
+      "type": "BS",
+      "resourceType": "Microsoft.Storage/storageAccounts"
+    },
+    {
+      "type": "BS",
       "resourceType": null
     },
     {
-      "type": "PG",
-      "resourceType": null
-    },
-    {
-      "type": "PG",
+      "type": "BS",
       "resourceType": null
     }
   ],
@@ -86,11 +92,11 @@
     },
     {
       "type": "task",
-      "value": "sql"
+      "value": "keyvault"
     },
     {
       "type": "secret",
-      "value": "mgsecret"
+      "value": null
     }
   ]
 }

@@ -51,9 +51,6 @@ az login --service-principal -u http://PaaSBackup --password $ConfigDir/azurelog
 if [ ! -d $RootBackupDir ]; then mkdir mkdir ${RootBackupDir}; fi
 if [ ! -d ${RootBackupDir} ]; then mkdir ${RootBackupDir}; fi
 if [ ! -d ${ServiceBackupDir} ]; then mkdir ${ServiceBackupDir}; fi
-if [ ! -d ${ServiceBackupDir}/backups ]; then mkdir ${ServiceBackupDir}/backups; fi
-if [ ! -d ${ServiceBackupDir}/restore ]; then mkdir ${ServiceBackupDir}/restore; fi
-if [ ! -d ${ServiceBackupDir}/old ]; then mkdir ${ServiceBackupDir}/old; fi
 find ${LogDir}/* -mtime +15 -type f -exec rm {} \;
 find ${RootBackupDir}/* -mtime +15 -type f -exec rm {} \;
 
@@ -105,19 +102,22 @@ do
                 fi
                 pass=$(echo $response | python3 -c 'import sys, json; print (json.load(sys.stdin)["value"])')
                 for container in ${containers[@]}; do
-                        echo !!!!! Running process  $1 Storage Account $3 !!!!!
+                        echo !!!!! Running container  $container Storage Account $1 !!!!!
                         echo "accountName ${1}" > ${ConfigDir}/${container}
                         echo "accountKey ${pass}" >> ${ConfigDir}/${container}
-			if [ $USERSERVICEPRINCIPAL = "YES" ]; then
-                        	echo "servicePrincipalClientId $SERVICEPRINCIPALCLIENTID" >> ${ConfigDir}/${container}
-	               		echo "servicePrincipalClientSecret $SERVICEPRINCIPALCLIENTSECRET" >> ${ConfigDir}/${container}
-	                	echo "servicePrincipalTenantId $TENANID" >> ${ConfigDir}/${container}
-			fi
+                        if [ $USERSERVICEPRINCIPAL = "YES" ]; then
+                                echo "servicePrincipalClientId $SERVICEPRINCIPALCLIENTID" >> ${ConfigDir}/${container}
+                                echo "servicePrincipalClientSecret $SERVICEPRINCIPALCLIENTSECRET" >> ${ConfigDir}/${container}
+                                echo "servicePrincipalTenantId $TENANID" >> ${ConfigDir}/${container}
+                        fi
                         echo "containerName $container" >> ${ConfigDir}/${container}
-                        if [ ! -d ${ServiceBackupDir}/${container} ]; then mkdir ${ServiceBackupDir}/${container}; fi
-                        mountpoint -q ${ServiceBackupDir}/${container}
+                        if [ ! -d ${ServiceBackupDir}/$1/${container} ]; then mkdir -p ${ServiceBackupDir}/$1/${container}; fi
+                        if [ ! -d ${ServiceBackupDir}/$1/backups ]; then mkdir -p ${ServiceBackupDir}/$1/backups; fi
+                        if [ ! -d ${ServiceBackupDir}/$1/restore ]; then mkdir -p ${ServiceBackupDir}/$1/restore; fi
+                        if [ ! -d ${ServiceBackupDir}/$1/old ]; then mkdir ${ServiceBackupDir}/$1/old; fi
+                        mountpoint -q ${ServiceBackupDir}/$1/${container}
                         if [ "$?" == "1" ]; then
-                           timeout 60s blobfuse ${ServiceBackupDir}/${container} --tmp-path=/tmp/blobfusetmp.${container} -o attr_timeout=240 -o negative_timeout=120 --config-file=${ConfigDir}/${container} --log-level=LOG_DEBUG --file-cache-timeout-in-seconds=120 -o ro -o nonempty
+                           timeout 60s blobfuse ${ServiceBackupDir}/$1/${container} --tmp-path=/tmp/blobfusetmp.$1.${container} -o attr_timeout=240 -o negative_timeout=120 --config-file=${ConfigDir}/${container} --log-level=LOG_DEBUG --file-cache-timeout-in-seconds=120 -o ro -o nonempty
                         fi
                         if [ "$?" != "0" ]; then
                                 echo "************************* ERROR 010: Unable to Mount. Check Data in Config file DATALAKE, EXIT *************************"
@@ -126,7 +126,8 @@ do
                         echo !!!!! $task blog fuse mount of container ${container} of account $blob !!!!!
                         echo
                         echo !!!!! Container size !!!!!
-                        du -hs ${ServiceBackupDir}/${container}
+                        du -hs ${ServiceBackupDir}/$1/${container}
+                        ls -l  ${ServiceBackupDir}/$1/${container}
                         echo
                 done
         fi

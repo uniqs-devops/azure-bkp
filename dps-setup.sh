@@ -97,8 +97,6 @@ function prebuild {
     echo "RUN /$INSTALLDIR/setup.sh" >> temp.dockerfile
     echo "# Cleanup /tmp folder, agent start  and Configuration persist" >> temp.dockerfile
     echo "RUN rm -f /tmp/*.rpm" >> temp.dockerfile
-    #echo "RUN echo 127.0.1.1 $CONTAINER_NAME > /etc/hosts && wget http://$CONTAINER_NAME" >> temp.dockerfile
-    echo "#CMD echo localhost localhost.localdomain $CONTAINER_NAME > /etc/hosts; supervisord -n;" >> temp.dockerfile
     # About ENTRYPOINTs
     if [ $USEAVAMAR = "YES" ]; then
         echo "ENTRYPOINT mount -a &&  [ -f /etc/init.d/avagent ] && /etc/init.d/avagent start && /bin/bash" >> temp.dockerfile
