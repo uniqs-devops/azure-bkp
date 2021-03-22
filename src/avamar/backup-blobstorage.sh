@@ -85,26 +85,10 @@ do
                 task=$TASK_FIX
                 secret=$SECRET_FIX
                 port=$PORT_FIX
-                echo !!!!! Processing token from Keyvault !!!!!
-                response=$(curl 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fvault.azure.net' -H Metadata:true -s)
-                if [ ${response:2:5} == "error" ]; then
-                        echo "****************************** ERROR 001 Getting token from KeyVault ******************************"
-                        ERROR=1
-                        break
-                fi
-                access_token=$(echo $response | python3 -c 'import sys, json; print (json.load(sys.stdin)["access_token"])')
-                echo !!!!! Processing value from Keyvault !!!!!
-                response=$(curl https://${KeyVault}.vault.azure.net/secrets/$secret?api-version=2016-10-01 -s -H "Authorization: Bearer ${access_token}")
-                if [ ${response:2:5} == "error" ]; then
-                        echo "****************************** ERROR 002 Obtaining key value from KeyVault ******************************"
-                        ERROR=2
-                        break
-                fi
-                pass=$(echo $response | python3 -c 'import sys, json; print (json.load(sys.stdin)["value"])')
                 for container in ${containers[@]}; do
                         echo !!!!! Running container  $container Storage Account $1 !!!!!
                         echo "accountName ${1}" > ${ConfigDir}/${container}
-                        echo "accountKey ${pass}" >> ${ConfigDir}/${container}
+                        echo "accountKey ${key}" >> ${ConfigDir}/${container}
                         if [ $USERSERVICEPRINCIPAL = "YES" ]; then
                                 echo "servicePrincipalClientId $SERVICEPRINCIPALCLIENTID" >> ${ConfigDir}/${container}
                                 echo "servicePrincipalClientSecret $SERVICEPRINCIPALCLIENTSECRET" >> ${ConfigDir}/${container}
