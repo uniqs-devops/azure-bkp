@@ -52,7 +52,6 @@ if [ ! -d $RootBackupDir ]; then mkdir mkdir ${RootBackupDir}; fi
 if [ ! -d ${RootBackupDir} ]; then mkdir ${RootBackupDir}; fi
 if [ ! -d ${ServiceBackupDir} ]; then mkdir ${ServiceBackupDir}; fi
 find ${LogDir}/* -mtime +15 -type f -exec rm {} \;
-find ${RootBackupDir}/* -mtime +15 -type f -exec rm {} \;
 
 if [ ! -d $ConfigDir ]; then
         echo $ConfigDir
