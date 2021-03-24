@@ -33,10 +33,6 @@
 
 - Las claves "datadomainServerName.mountType" y "datadomainServerName.RootBackupDir" deben ubicarse en el nivel superior, hay que modificar los .sh de configuracion y backup.
 
-- Cambiar $KeyVault en backup-keyvault.sh por valor aprendido de la lista
-
-  az keyvault secret backup --file ${BackupDir}/$KeyVault.$1.$(date +%Y%m%d%H%M%S).bkp --vault-name $KeyVault --name $1
-  
 - Desarrollar modulo de python para evitar Azure Data Factory, referencias
   https://github.com/Azure/azure-cosmos-python/
   https://github.com/Azure/azure-sdk-for-python
