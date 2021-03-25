@@ -41,3 +41,12 @@
   https://docs.microsoft.com/es-es/azure/cosmos-db/account-databases-containers-items 
   
 
+Proyecto contenedor syslog-ng (en nuestro caso con un fallido sudo docker run -it -p 514:514 -p 601:601 --name syslog-ng balabit/syslog-ng:latest --no-caps)
+1) Bajamos la imagen 
+REPOSITORY                                                          TAG      IMAGE ID       CREATED        SIZE
+docker.io/balabit/syslog-ng                                         latest   8c8f5068089e   6 days ago     495 MB
+2) Levantamos contenedor 
+sudo docker run -d -it -p 514:514 -p 601:601 -v "src/syslog/syslog-ng.conf":/etc/syslog-ng/syslog-ng.conf --name syslog-ng 8c8f5068089e --no-caps
+3) Attach con 
+sudo docker exec -it syslog-ng /bin/bash
+TODO --> 4) Reconfigurar syslog-ng.conf para permitir que acepte log del contenedor azure-blobstorage
