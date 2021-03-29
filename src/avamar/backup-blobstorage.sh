@@ -89,6 +89,7 @@ do
                         echo "accountName ${1}" > ${ConfigDir}/${container}
                         echo "accountKey ${key}" >> ${ConfigDir}/${container}
                         if [ $USERSERVICEPRINCIPAL = "YES" ]; then
+                                echo "authType SPN" >> ${ConfigDir}/${container}
                                 echo "servicePrincipalClientId $SERVICEPRINCIPALCLIENTID" >> ${ConfigDir}/${container}
                                 echo "servicePrincipalClientSecret $SERVICEPRINCIPALCLIENTSECRET" >> ${ConfigDir}/${container}
                                 echo "servicePrincipalTenantId $TENANID" >> ${ConfigDir}/${container}
