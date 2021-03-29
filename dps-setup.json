@@ -7,6 +7,11 @@
   "resourceGroup": "cibd1weursgglocolcrit001",
   "useTags": "NO",
   "useFQDN": "NO",
+  "servicePrincipal": {
+    "useServicePrincipal": "YES",
+    "servicePrincipalClientId": "9194f0e1-647a-45de-ad84-8c167f193a27",
+    "servicePrincipalClientSecret": "2d0d6295c12190917c6560f9d44b789d877b30ae3dcebf3c588d4563844f82a"
+  },
   "proxy": {
     "useProxy": "NO",
     "proxyHttpName": "http://proxy.threatpulse.net:8080",
@@ -19,6 +24,7 @@
   },
   "avamar": {
     "useAvamar": "NO",
+    "avamarClientPort": "28003",
     "avamarServerName": "cibp1weuaval001.shared.azure.scib.gs.corp",
         "avamarDomain": "clients",
         "installDir": "dockerclient",
