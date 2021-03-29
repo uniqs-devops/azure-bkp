@@ -18,6 +18,10 @@
     "proxyHttpsName": "https://proxy.threatpulse.net:8080",
     "noProxy": "cloudcenter.corp,nngg.corp,gsnetcloud.corp,localhost"
   },
+  "subscription ": {
+    "changeDefaultsubscription": "YES",
+    "subscriptionID": "xxxxxxxxxxxxxxxxxxx"
+  },
   "certs": {
     "useCerts": "NO",
     "certFile": "ca-proxy_threatpulse_net"
