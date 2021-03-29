@@ -4,6 +4,9 @@
 	EJ.  "resourceGroup": "cibd1weursgglocolcrit001, cibd1weursgglocolcrit002"
 	Asumir que cada resourceGroup tiene un keyVaut o que todos los rg usan un solo keyvault
 
+- El comando 
+ 	sudo docker build -t $DockerfileName:1.0 -f $DockerfileName . --network host --add-host $CONTAINER_NAME:127.0.1.1 
+  no funciona para docker envuelto por podman, no existe --add-host 
 
 # Prioridad media
 
