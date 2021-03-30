@@ -15,7 +15,7 @@
   "proxy": {
     "useProxy": "NO",
     "proxyHttpName": "http://proxy.threatpulse.net:8080",
-    "proxyHttpsName": "https://proxy.threatpulse.net:8080",
+    "proxyHttpsName": "http://proxy.threatpulse.net:8080",
     "noProxy": "cloudcenter.corp,nngg.corp,gsnetcloud.corp,localhost"
   },
   "subscription ": {
