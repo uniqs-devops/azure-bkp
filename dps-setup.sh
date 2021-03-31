@@ -28,15 +28,15 @@ INSTALLDIR=`cat dps-setup.json  | jq -r '.avamar.installDir'`
 USEPROXY=`cat dps-setup.json  | jq -r '.proxy.useProxy'`
 PROXYHTTPNAME=`cat dps-setup.json  | jq -r '.proxy.proxyHttpName'`
 PROXYHTTPSNAME=`cat dps-setup.json  | jq -r '.proxy.proxyHttpsName'`
-NOPROXY=`cat dps-setup.json  | jq -r '.proxy.noProxy'` 
+NOPROXY=`cat dps-setup.json  | jq -r '.proxy.noProxy'`
 USECERTS=`cat dps-setup.json  | jq -r '.certs.useCerts'`
 CERTFILE=`cat dps-setup.json  | jq -r '.certs.certFile'`
 Dockerfolder=src/dockerfiles
 DockerfileName=$Dockerfolder/$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
-if [ $USEAVAMAR = "YES" ]; then 
-    	DockerfileName=$Dockerfolder/avamar.$AVEVERSION.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
-else 
-    	DockerfileName=$Dockerfolder/cron.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
+if [ $USEAVAMAR = "YES" ]; then
+        DockerfileName=$Dockerfolder/avamar.$AVEVERSION.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
+else
+        DockerfileName=$Dockerfolder/cron.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
 fi
 }
 function setup {
@@ -50,20 +50,20 @@ function prebuild {
     # Get environment
         environment
     # Docker container baseline
-	cp templates/Azure-header.dockerfile temp.dockerfile
-	if [ $USECERTS = "YES" ]; then
-		echo "#Certs configs" >> temp.dockerfile
-		echo "COPY src/packages/DockerEmbebed/certificates/$CERTFILE /etc/pki/ca-trust/source/anchors/" >> temp.dockerfile
-		echo "RUN update-ca-trust" >> temp.dockerfile
-	fi
-	if [ $USEPROXY = "YES" ]; then
-		echo "#Proxy config" >> temp.dockerfile
-		echo "ENV HTTP_PROXY=$PROXYHTTPNAME" >> temp.dockerfile
-		echo "ENV HTTPS_PROXY=$PROXYHTTPSNAME" >> temp.dockerfile
-		echo "ENV http_proxy=$PROXYHTTPNAME" >> temp.dockerfile
-		echo "ENV https_proyy=$PROXYHTTPSNAME" >> temp.dockerfile
-		echo "ENV NO_PROXY=$NOPROXY" >> temp.dockerfile
-	fi
+        cp templates/Azure-header.dockerfile temp.dockerfile
+        if [ $USECERTS = "YES" ]; then
+                echo "#Certs configs" >> temp.dockerfile
+                echo "COPY src/packages/DockerEmbebed/certificates/$CERTFILE /etc/pki/ca-trust/source/anchors/" >> temp.dockerfile
+                echo "RUN update-ca-trust" >> temp.dockerfile
+        fi
+        if [ $USEPROXY = "YES" ]; then
+                echo "#Proxy config" >> temp.dockerfile
+                echo "ENV HTTP_PROXY=$PROXYHTTPNAME" >> temp.dockerfile
+                echo "ENV HTTPS_PROXY=$PROXYHTTPSNAME" >> temp.dockerfile
+                echo "ENV http_proxy=$PROXYHTTPNAME" >> temp.dockerfile
+                echo "ENV https_proyy=$PROXYHTTPSNAME" >> temp.dockerfile
+                echo "ENV NO_PROXY=$NOPROXY" >> temp.dockerfile
+        fi
     cat templates/Azure-template.dockerfile >> temp.dockerfile
     #
     echo "#/bin/bash" > src/avamar/setup.sh
@@ -74,8 +74,6 @@ function prebuild {
       echo "--hostname="$CONTAINER_NAME > src/avamar/.avagent
       echo "--listenport="$PORT >> src/avamar/.avagent
       # Avamar
-      echo "#/$INSTALLDIR/bin/avagent.bin --init --daemon=false --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc/ --mcsaddr=$AVAMAR_SERVER --dpndomain=/$AVAMAR_DOMAIN --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
-      echo "#/$INSTALLDIR/bin/avagent.bin --vardir=/$INSTALLDIR/var --bindir=/$INSTALLDIR/bin/ --sysdir=/$INSTALLDIR/etc --logfile=/$INSTALLDIR/var/avagent.log" >> src/avamar/setup.sh
       echo "/$INSTALLDIR/etc/avagent.d register $AVAMAR_SERVER /$AVAMAR_DOMAIN" >> src/avamar/setup.sh
       cat templates/Azure-template-Avamar.dockerfile >> temp.dockerfile
     else
@@ -83,15 +81,15 @@ function prebuild {
       echo "echo '00 09 * * 1-5 /$INSTALLDIR/etc/scripts/backup-$DOCKERTYPE.sh' >> /var/spool/cron/root" >> src/avamar/setup.sh
     fi
     ##if [ $DOCKERTYPE != "keyvault" ]; then
-    	cat templates/Azure-template-$DOCKERTYPE.dockerfile >> temp.dockerfile
+        cat templates/Azure-template-$DOCKERTYPE.dockerfile >> temp.dockerfile
     ##fi
     if [ $MOUNTTYPE = "ddboostfs" ]; then
         # Ddboostfs & Lockbox
-          sudo /opt/emc/boostfs/bin/boostfs lockbox add-hosts $CONTAINER_NAME;  cp /opt/emc/boostfs/lockbox/boostfs.lockbox  src/ddboostfs/boostfs.lockbox
-	  echo "#/opt/emc/boostfs/bin/boostfs mount -d $DD_SERVER -s $STORAGE_UNIT /$RootBackupDir" >> src/avamar/setup.sh
-	  echo "echo '$DD_SERVER:/$STORAGE_UNIT /$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/avamar/setup.sh
-	  cat templates/Azure-template-DDBoostFS.dockerfile >> temp.dockerfile
-	fi
+      sudo /opt/emc/boostfs/bin/boostfs lockbox add-hosts $CONTAINER_NAME;  cp /opt/emc/boostfs/lockbox/boostfs.lockbox  src/ddboostfs/boostfs.lockbox
+          echo "#/opt/emc/boostfs/bin/boostfs mount -d $DD_SERVER -s $STORAGE_UNIT /$RootBackupDir" >> src/avamar/setup.sh
+          echo "echo '$DD_SERVER:/$STORAGE_UNIT /$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/avamar/setup.sh
+          cat templates/Azure-template-DDBoostFS.dockerfile >> temp.dockerfile
+        fi
     echo "COPY src/avamar/setup.sh /$INSTALLDIR" >> temp.dockerfile
     echo "RUN chmod 755 /$INSTALLDIR/setup.sh" >> temp.dockerfile
     echo "RUN /$INSTALLDIR/setup.sh" >> temp.dockerfile
@@ -118,7 +116,7 @@ exit
 function build {
 # Docker
     environment
-    sudo docker build -t $DockerfileName:1.0 -f $DockerfileName . --network host --add-host $CONTAINER_NAME:127.0.1.1 
+    sudo docker build -t $DockerfileName:1.0 -f $DockerfileName . --network host --add-host $CONTAINER_NAME:127.0.1.1
 exit
 }
 
@@ -126,20 +124,42 @@ function deploy-launch {
 # To support several docker technologies
     while [ "$1" != "" ]; do
         case $1 in
-                --host )                deploy-on-host $2
+                --local )               deploy-here
+                                                        ;;
+                --host  )
+                        if [ "$2" = "" ]; then echo "Enter hostname"; exit 1; fi
+                                        deploy-on-host $2
                                                         ;;
                 --kubernetes )          deploy-on-kubernetes
                                                         ;;
                 --openshift )           deploy-on-openshift
                                                         ;;
-                -h | --help | --ayuda ) echo "Please type '--host' to Hold on host or '--kubernetes' to Hold on kubernetes or '--openshift' to Hold on openshift"
+                -h | --help | --ayuda ) echo "Please type '--local' to Hold here '--host' to Hold on host or '--kubernetes' to Hold on kubernetes or '--openshift' to Hold on openshift"
                                                 exit
                                                         ;;
-                * )                     echo "Please type '--host' to Hold on host or '--kubernetes' to Hold on kubernetes or '--openshift' to Hold on openshift"
+                * )                     echo "Please type '--local' to Hold here '--host' to Hold on host or '--kubernetes' to Hold on kubernetes or '--openshift' to Hold on openshift"
                                                 exit  1
         esac
     done
 exit
+}
+
+function deploy-here {
+    environment
+    if [ $DOCKERTYPE = "blobstorage" ]; then
+          if [ $USEAVAMAR = "YES" ]; then
+                sudo docker run --hostname $CONTAINER_NAME --name azure-$DOCKERTYPE -d -it --device /dev/fuse -p $PORT:$PORT -p 30001:30001 -p 30002:30002 -p 27000:27000 -p 28001:28001 -p 29000:29000 -p 30001:30001  -p 30003:30003  -p 27000:27000  -P --cap-add SYS_ADMIN  --network host --privileged `sudo docker images | grep $DockerfileName | awk '{print $3}'` /bin/bash
+      else
+            sudo docker run --hostname $CONTAINER_NAME --name azure-$DOCKERTYPE -d -it --device /dev/fuse --cap-add SYS_ADMIN  --network host --privileged `sudo docker images | grep $DockerfileName | awk '{print $3}'` /bin/bash
+          fi
+        else
+          if [ $USEAVAMAR = "YES" ]; then
+        sudo docker run --hostname $CONTAINER_NAME --name azure-$DOCKERTYPE -d -it -p $PORT:$PORT -p 30001:30001 -p 30002:30002 -p 27000:27000 -p 28001:28001 -p 29000:29000 -p 30001:30001  -p 30003:30003  -p 27000:27000 -P --network host  `sudo docker images | grep $DockerfileName | awk '{print $3}'` /bin/bash
+    else
+                sudo docker run --hostname $CONTAINER_NAME --name azure-$DOCKERTYPE -d -it --network host  `sudo docker images | grep $DockerfileName | awk '{print $3}'` /bin/bash
+          fi
+        fi
+exit		
 }
 
 function deploy-on-host {
@@ -153,17 +173,8 @@ function deploy-on-host {
       ssh $1 sudo docker run --hostname $CONTAINER_NAME --name  -d -it --device /dev/fuse --cap-add SYS_ADMIN  --network host --privileged `sudo docker images | grep avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER | awk '{print $3}'` /bin/bash
     else
       ssh $1 sudo docker run --hostname $CONTAINER_NAME --name  -d -it --device /dev/fuse --cap-add SYS_ADMIN  --network host  `sudo docker images | grep avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER | awk '{print $3}'` /bin/bash
-    fi  
+    fi
     rm -f /tmp/avamar-pg.tar
-    # Deploy container on Openshift or Kubernetes cluster
-    # Keys must be configured before launch
-    environment
-    CONTAINER_NAME=`cat dps-setup.json  | jq -r '.container.containerName'`
-    sudo docker save -o /tmp/avamar-pg.img `sudo docker images | grep avamar.$AVEVERSION-$DOCKERTYPE-$CLOUDPROVIDER | awk '{print $3}'`
-    scp /tmp/avamar-pg.img $1:/tmp
-    ssh $1 sudo docker load -i /tmp/avamar-pg.img
-    ssh $1 sudo docker run --hostname $CONTAINER_NAME --name   -d -it --device /dev/fuse `sudo docker images | grep avamar-pg | awk '{print $3}'` /bin/bash
-    rm -f /tmp/avamar-pg.img
 exit
 }
 
@@ -185,17 +196,13 @@ while [ "$1" != "" ]; do
                                 ;;
         -b | --build )          build
                                 ;;
-        -d | --deploy )         if [ "$2" = "" ]; then echo "Please type '--host' to Hold on host or '--kubernetes' to Hold on kubernetes or '--openshift' to Hold on openshift"; exit 1; fi
-                                if [ "$3" = "" ]; then echo "Enter hostname"; exit 1; fi
-                                                                deploy-launch $2 $3
+        -d | --deploy )         if [ "$2" = "" ]; then echo "Please type '--local' to Hold here '--host' to Hold on host or '--kubernetes' to Hold on kubernetes or '--openshift' to Hold on openshift"; exit 1; fi
+                                deploy-launch $2 $3
                                 ;;
-        -h | --help | --ayuda ) echo "Please type '-s | --setup' to Setup or '-p | --prebuild' to Prebuild or '-b | --build' to Build or '-d | --deploy' to Deploy"
+        -h | --help | --ayuda ) echo "Please type '--local' to Hold here '--host' to Hold on host or '--kubernetes' to Hold on kubernetes or '--openshift' to Hold on openshift"
                                 exit
                                 ;;
-        * )                     echo "Please type '-s | --setup' to Setup or '-p | --prebuild' to Prebuild or '-b | --build' to Build or '-d | --deploy' to Deploy"
+        * )                     echo "Please type '--local' to Hold here '--host' to Hold on host or '--kubernetes' to Hold on kubernetes or '--openshift' to Hold on openshift"
                                 exit  1
     esac
 done
-
-
-
