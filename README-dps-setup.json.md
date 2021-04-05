@@ -38,7 +38,7 @@
 - useAvamar
 ``` Use avamar to store backup data ```
 - avamarClientPort
-``` Avamar client port, e.g. 28003 ```
+``` Avamar client port, FROM 28003 ```
 - avamarServerName and datadomainServerName
 ``` Avamar and Data Domain FQDN ```
 - avamarDomain
