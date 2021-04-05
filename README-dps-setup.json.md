@@ -17,8 +17,16 @@
 ``` tags or default values using fixValues ```
 - useFQDN
 ``` FQDN or IP through nslookup ```
-- proxy
+- useProxy
 ``` YES if docker file needs proxy ENV variables ```
+- proxyHttpName and proxyHttpsName
+```  ```
+- subscription 
+``` To change from default suscription ```
+- changeDefaultsubscription
+``` YES if change is needed ``` 
+- subscriptionID
+``` Subuscrition ID ```
 - cers
 ``` YES if certificate is needed ```
 - useServicePrincipal
@@ -29,6 +37,8 @@
 ``` Service principal client password```
 - useAvamar
 ``` Use avamar to store backup data ```
+- avamarClientPort
+``` Avamar client port, e.g. 28003 ```
 - avamarServerName and datadomainServerName
 ``` Avamar and Data Domain FQDN ```
 - avamarDomain
