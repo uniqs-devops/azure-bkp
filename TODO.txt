@@ -23,15 +23,7 @@
 # Prioridad baja
 
 - Verificar si corriendo una nueva instancia del contenedor se pueden reconfigurar los clientes de Avamar y Postgres para distribuir una imagen.
-
-- Poner una clave nueva en dps-setup.json permitir dos tipos de login
-  
-  Para santander az login --service-principal --username --password --tenanid, es decir deben p
-
-  Para otros  az login --service-principal --username http://PaaSBackup --password  --tenant 
-  
-  Poner una clave en json con la suscripcion por defecto
-  
+ 
 - La clave "installDir.dockerclient" debe salir de "avamar.avamarServerName" debe ubicarse en el nivel superior, hay que modificar los .sh de configuracion y backup.
 
 - Revisar dps-setup.sh -d <hostname>
