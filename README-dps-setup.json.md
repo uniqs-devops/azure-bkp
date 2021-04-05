@@ -20,11 +20,11 @@
 - useProxy
 ``` YES if docker file needs proxy ENV variables ```
 - proxyHttpName and proxyHttpsName
-```  ```
-- subscription 
-``` To change from default suscription ```
+``` Proxies FQDN and port values ```
+- noProxy
+``` No proxy for FQDNs (comma separated)  ```
 - changeDefaultsubscription
-``` YES if change is needed ``` 
+``` YES to change from default suscription ``` 
 - subscriptionID
 ``` Subuscrition ID ```
 - cers
