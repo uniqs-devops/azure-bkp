@@ -6,13 +6,11 @@ version="1.0"
 
 ConfigDir=/dockerclient
 SERVICE_TYPE=`cat $ConfigDir/dps-setup.json  | jq -r '.dockerType'`
-KeyVault=`cat $ConfigDir/dps-setup.json  | jq -r '.keyVaultName'`
 LogDir=$ConfigDir/var
 RootBackupDir=/`cat $ConfigDir/dps-setup.json  | jq -r '.datadomain.RootBackupDir'`
 ServiceBackupDir=${RootBackupDir}/$SERVICE_TYPE
 BackupDir=${ServiceBackupDir}/backups
 RestoreDir=${ServiceBackupDir}/restore
-OldBackupDir=${ServiceBackupDir}/old
 LogFile=${LogDir}/${SERVICE_TYPE}_`date +%Y%m%d.%T`.log
 
 ERROR=1
@@ -25,22 +23,9 @@ echo "**************************************************************************
 echo !!!!! `date +%Y%m%d.%T` starting swobackup process, service $SERVICE_TYPE  !!!!!
 echo -e "\n"
 
-USER_TAG=`jq '.backupTags[] | select(.type=="user")|.value' $ConfigDir/dps-setup.json | sed 's/"//g'`
-PORT_TAG=`jq '.backupTags[] | select(.type=="port")|.value' $ConfigDir/dps-setup.json | sed 's/"//g'`
-DATABASE_TAG=`jq '.backupTags[] | select(.type=="database")|.value' $ConfigDir/dps-setup.json | sed 's/"//g'`
-TASK_TAG=`jq '.backupTags[] | select(.type=="task")|.value' $ConfigDir/dps-setup.json | sed 's/"//g'`
-SECRET_TAG=`jq '.backupTags[] | select(.type=="secret")|.value' $ConfigDir/dps-setup.json | sed 's/"//g'`
-USER_FIX=`jq '.fixValues[] | select(.type=="user")|.value' $ConfigDir/dps-setup.json | sed 's/"//g'`
-PORT_FIX=`jq '.fixValues[] | select(.type=="port")|.value' $ConfigDir/dps-setup.json | sed 's/"//g'`
-DATABASE_FIX=`jq '.fixValues[] | select(.type=="database")|.value' $ConfigDir/dps-setup.json | sed 's/"//g'`
-TASK_FIX=`jq '.fixValues[] | select(.type=="task")|.value' $ConfigDir/dps-setup.json | sed 's/"//g'`
-SECRET_FIX=`jq '.fixValues[] | select(.type=="secret")|.value' $ConfigDir/dps-setup.json | sed 's/"//g'`
 RESOURCES=`jq '.azureResources[] | select(.type=="PG" and .resourceType != null)|.resourceType' $ConfigDir/dps-setup.json | sed 's/"//g'`
 TENANID=`cat $ConfigDir/dps-setup.json  | jq -r '.tenantId'`
-MOUNTTYPE=`cat $ConfigDir/dps-setup.json  | jq -r '.datadomain.mountType'`
 RESOURCEGROUP=`cat $ConfigDir/dps-setup.json  | jq -r '.resourceGroup'`
-USETAGS=`cat $ConfigDir/dps-setup.json  | jq -r '.useTags'`
-USEFQDN=`cat $ConfigDir/dps-setup.json  | jq -r '.useFQDN'`
 USERSERVICEPRINCIPAL=`cat $ConfigDir/dps-setup.json  | jq -r '.servicePrincipal.useServicePrincipal'`
 SERVICEPRINCIPALCLIENTID=`cat $ConfigDir/dps-setup.json  | jq -r '.servicePrincipal.servicePrincipalClientId'`
 SERVICEPRINCIPALCLIENTSECRET=`cat $ConfigDir/dps-setup.json  | jq -r '.servicePrincipal.servicePrincipalClientSecret'`
@@ -79,17 +64,7 @@ do
         if [ "${1::1}" != "#" ] ; then
                 key="$(az storage account keys list -n $1 --query "[0].{value:value}" --output tsv)"
                 containers="$(az storage container list --account-name $1 --account-key $key --query "[].{name:name}" --output tsv)"
-                if [ $USEFQDN = "NO" ]; then
-                        server=$(nslookup "$1"".postgres.database.azure.com" | awk -F':' '/^Address: / { matched = 1 } matched { print $2}' | xargs)
-                        [[ -z "$server" ]] && echo Server Name to IP translate fail || echo IP for server "$1" is "$server"
-                else
-                        server=$1.postgres.database.azure.com
-                fi
                 ERROR=0
-                username=$USER_FIX
-                task=$TASK_FIX
-                secret=$SECRET_FIX
-                port=$PORT_FIX
                 for container in ${containers[@]}; do
                         echo !!!!! Running container  $container Storage Account $1 !!!!!
                         echo "accountName ${1}" > ${ConfigDir}/${container}
@@ -102,12 +77,10 @@ do
                         fi
                         echo "containerName $container" >> ${ConfigDir}/${container}
                         if [ ! -d ${ServiceBackupDir}/$1/${container} ]; then mkdir -p ${ServiceBackupDir}/$1/${container}; fi
-                        if [ ! -d ${ServiceBackupDir}/$1/backups ]; then mkdir -p ${ServiceBackupDir}/$1/backups; fi
                         if [ ! -d ${ServiceBackupDir}/$1/restore ]; then mkdir -p ${ServiceBackupDir}/$1/restore; fi
-                        if [ ! -d ${ServiceBackupDir}/$1/old ]; then mkdir ${ServiceBackupDir}/$1/old; fi
                         mountpoint -q ${ServiceBackupDir}/$1/${container}
                         if [ "$?" == "1" ]; then
-                           timeout 60s blobfuse ${ServiceBackupDir}/$1/${container} --tmp-path=/tmp/blobfusetmp.$1.${container} -o attr_timeout=240 -o negative_timeout=120 --config-file=${ConfigDir}/${container} --log-level=LOG_DEBUG --file-cache-timeout-in-seconds=120 -o ro -o nonempty
+                           timeout 60s blobfuse ${ServiceBackupDir}/$1/${container} --tmp-path=/tmp/blobfusetmp.$1.${container} -o attr_timeout=240 -o negative_timeout=120 --config-file=${ConfigDir}/${container} --log-level=LOG_WARNING --file-cache-timeout-in-seconds=120 -o ro -o nonempty
                         fi
                         if [ "$?" != "0" ]; then
                                 echo "************************* ERROR 010: Unable to Mount. Check Data in Config file DATALAKE, EXIT *************************"
