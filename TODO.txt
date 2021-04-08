@@ -53,3 +53,4 @@ referencia: https://hub.docker.com/r/balabit/syslog-ng
 - Configurar lockbox en funcion prebuild
 - Cargar imagen CentOS en funcion setup
 - Encriptar la clave en .pem para el caso de Santander
+- En las pretareas al installar ddboost pide como dependencia fuse
