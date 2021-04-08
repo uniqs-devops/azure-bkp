@@ -48,3 +48,7 @@ sudo docker run -d -it -p 514:514 -p 601:601 -v "src/syslog/syslog-ng.conf":/etc
 sudo docker exec -it syslog-ng /bin/bash
 TODO --> 4) Reconfigurar syslog-ng.conf para permitir que acepte log del contenedor azure-blobstorage
 referencia: https://hub.docker.com/r/balabit/syslog-ng
+
+- Instalar ddboost en funcion setup
+- Configurar lockbox en funcion prebuild
+- Cargar imagen CentOS en funcion setup
