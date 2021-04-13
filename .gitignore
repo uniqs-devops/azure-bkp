@@ -1,5 +1,4 @@
-src/avamar/.avagent
-src/avamar/resources
-src/avamar/setup.sh
-src/ddboostfs/boostfs.lockbox
-src/imanges/*
+# Log file
+*.log
+# Tar file
+*.tar
