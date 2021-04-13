@@ -42,8 +42,11 @@ fi
 function setup {
 # Install packeges needed by DCI
     sudo yum install -y yum-utils jq docker
-    set -x
-    sudo cp src/azure/azure-cli.repo /etc/yum.repos.d/azure-cli.repo; sudo yum install -y azure-cli
+    if [ -f src/packages/DockerEmbebed/azcli/azure-cli-*.rpm ] ; then
+	sudo yum install -y src/packages/DockerEmbebed/azcli/azure-cli-*.rpm
+    else
+    	sudo cp src/azure/azure-cli.repo /etc/yum.repos.d/azure-cli.repo; sudo yum install -y azure-cli
+    fi	
     if [ -f src/images/centos.tar ] && [ ! `sudo docker images | grep centos | awk '{print $3}'` ] ; then
             sudo docker load -i src/images/centos.tar  centos:latest
    fi
