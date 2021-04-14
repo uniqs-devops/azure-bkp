@@ -51,10 +51,6 @@ referencia: https://hub.docker.com/r/balabit/syslog-ng
 
 - Instalar ddboost en funcion setup
 - Configurar lockbox en funcion prebuild
-- Cargar imagen CentOS en funcion setup (asi fue generado el tar  sudo docker save --quiet -o src/images/centos.tar <ImageID>)
-   if [ -f src/images/centos.tar ] && [ ! `sudo docker images | grep centos | awk '{print $3}'` ] ; then
-            sudo docker load -i src/images/centos.tar  centos:latest
-   fi
 
 - Encriptar la clave en .pem para el caso de Santander
 - En las pretareas al installar ddboost pide como dependencia fuse
