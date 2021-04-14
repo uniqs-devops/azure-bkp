@@ -68,7 +68,7 @@ function prebuild {
                 echo "ENV HTTP_PROXY=$PROXYHTTPNAME" >> temp.dockerfile
                 echo "ENV HTTPS_PROXY=$PROXYHTTPSNAME" >> temp.dockerfile
                 echo "ENV http_proxy=$PROXYHTTPNAME" >> temp.dockerfile
-                echo "ENV https_proyy=$PROXYHTTPSNAME" >> temp.dockerfile
+                echo "ENV https_proxy=$PROXYHTTPSNAME" >> temp.dockerfile
                 echo "ENV NO_PROXY=$NOPROXY" >> temp.dockerfile
         fi
     cat templates/Azure-template.dockerfile >> temp.dockerfile
