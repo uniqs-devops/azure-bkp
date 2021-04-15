@@ -1,26 +1,18 @@
 {
   "cloudProvider": "azure",
-  "dockerType": "mysql",
-  "dockerTypeName": "MS",
-  "keyVaultName": "cibd1weuakvglocolcrit001",
-  "tenantId": "35595a02-4d6d-44ac-99e1-f9ab4cd872db",
-  "resourceGroup": "cibd1weursgglocolcrit001",
+  "dockerType": "postgresql",
+  "dockerTypeName": "PG",
+  "keyVaultName": "keyvaultautoproxyrg02",
+  "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
+  "resourceGroup": "AutoProxyRG",
   "useTags": "NO",
   "useFQDN": "NO",
-  "servicePrincipal": {
-    "useServicePrincipal": "YES",
-    "servicePrincipalClientId": "9194f0e1-647a-45de-ad84-8c167f193a27",
-    "servicePrincipalClientSecret": "2d0d6295c12190917c6560f9d44b789d877b30ae3dcebf3c588d4563844f82a"
-  },
+  "useKeyVaultSecureAccess": "NO",
   "proxy": {
     "useProxy": "NO",
     "proxyHttpName": "http://proxy.threatpulse.net:8080",
-    "proxyHttpsName": "http://proxy.threatpulse.net:8080",
+    "proxyHttpsName": "https://proxy.threatpulse.net:8080",
     "noProxy": "cloudcenter.corp,nngg.corp,gsnetcloud.corp,localhost"
-  },
-  "subscription ": {
-    "changeDefaultsubscription": "YES",
-    "subscriptionID": "xxxxxxxxxxxxxxxxxxx"
   },
   "certs": {
     "useCerts": "NO",
@@ -28,7 +20,6 @@
   },
   "avamar": {
     "useAvamar": "NO",
-    "avamarClientPort": "28003",
     "avamarServerName": "cibp1weuaval001.shared.azure.scib.gs.corp",
         "avamarDomain": "clients",
         "installDir": "dockerclient",
@@ -40,22 +31,22 @@
         "RootBackupDir": "Backup"
   },
   "ddboosfs": {
-    "storageUnit": "PaasBackup"
+    "storageUnit": "PaaSbackup"
   },
   "container": {
-    "containerName": "dockerms-01.shared.azure.scib.gs.corp"
+    "containerName": "dockerpg-01.pcalvo.local"
   },
   "azureResources": [
     {
-      "type": "MS",
-      "resourceType": "Microsoft.DBforMySQL/servers"
+      "type": "PG",
+      "resourceType": "Microsoft.DBforPostgreSQL/servers"
     },
     {
-      "type": "MS",
+      "type": "PG",
       "resourceType": null
     },
     {
-      "type": "MS",
+      "type": "PG",
       "resourceType": null
     }
   ],
@@ -96,11 +87,11 @@
     },
     {
       "type": "task",
-      "value": "mysql"
+      "value": "postgresql"
     },
     {
       "type": "secret",
-      "value": "avamar-backup-cibd1weuapsglocolcrit001"
+      "value": "postgresqlsecret"
     }
   ]
 }

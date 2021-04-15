@@ -6,7 +6,8 @@
   "tenantId": "35595a02-4d6d-44ac-99e1-f9ab4cd872db",
   "resourceGroup": "cibd1weursgglocolcrit001",
   "useTags": "NO",
-  "useFQDN": "NO",
+  "useFQDN": "YES",
+  "useKeyVaultSecureAccess": "YES",
   "proxy": {
     "useProxy": "YES",
     "proxyHttpName": "http://proxy.threatpulse.net:8080",
