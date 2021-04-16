@@ -1,7 +1,6 @@
 #!/bin/bash
 # SWO Avamar script for backup in Azure Blob Storage.
 # Disclaimer: Based on an original Software One script
-
 version="1.0"
 
 ConfigDir=/dockerclient
@@ -55,15 +54,15 @@ echo
 echo "*********************************** SEARCHING cloud resources **************************************"
 echo
 az storage account list --query "[].{name:name}" --output tsv > ${ConfigDir}/swoconfig
+key="$(az keyvault secret show --name $secret --vault-name ${KeyVault} | jq -r '.value')"
 cat ${ConfigDir}/swoconfig | while read linea
 do
         set -a $linea " "
         if [ "${1::1}" != "#" ] ; then
-                key="$(az keyvault secret show --name $secret --vault-name ${KeyVault} | jq -r '.value')"
                 containers="$(az storage container list --account-name $1 --account-key $key --query "[].{name:name}" --output tsv)"
                 ERROR=0
                 for container in ${containers[@]}; do
-                        echo !!!!! Running container  $container Storage Account $1 !!!!!
+                        echo !!!!! Mounting container $container of storage account $1 !!!!!
                         echo "accountName ${1}" > ${ConfigDir}/${container}
                         echo "accountKey ${key}" >> ${ConfigDir}/${container}
                         if [ $USERSERVICEPRINCIPAL = "YES" ]; then
@@ -91,6 +90,5 @@ do
                 done
         fi
 done  < ${ConfigDir}/swoconfig
-
 # Logout
 az logout
