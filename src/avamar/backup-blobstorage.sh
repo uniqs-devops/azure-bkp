@@ -16,11 +16,10 @@ LogFile=${LogDir}/${SERVICE_TYPE}_`date +%Y%m%d.%T`.log
 ERROR=1
 [ ! -d $LogDir ] && mkdir $LogDir
 exec &>> >(tee -a $LogFile)
-
 echo "*****************************************************************************************************"
 echo "******************************** STARTING swobackup.sh ver ${version} *******************************"
 echo "*****************************************************************************************************"
-echo !!!!! `date +%Y%m%d.%T` starting swobackup process, service $SERVICE_TYPE  !!!!!
+echo !!!!! `date +%Y%m%d.%T` starting process, service $SERVICE_TYPE  !!!!!
 echo -e "\n"
 
 RESOURCES=`jq '.azureResources[] | select(.type=="PG" and .resourceType != null)|.resourceType' $ConfigDir/dps-setup.json | sed 's/"//g'`
@@ -43,13 +42,11 @@ if [ ! -d $RootBackupDir ]; then mkdir mkdir ${RootBackupDir}; fi
 if [ ! -d ${RootBackupDir} ]; then mkdir ${RootBackupDir}; fi
 if [ ! -d ${ServiceBackupDir} ]; then mkdir ${ServiceBackupDir}; fi
 find ${LogDir}/* -mtime +15 -type f -exec rm {} \;
-
 if [ ! -d $ConfigDir ]; then
         echo $ConfigDir
         echo "************************* ERROR 006: Config folder not found. EXIT *************************"
         exit 6
 fi
-
 echo
 echo !!!!! Processing config file !!!!!
 echo
@@ -82,11 +79,11 @@ do
                         if [ "$?" == "1" ]; then
                            timeout 60s blobfuse ${ServiceBackupDir}/$1/${container} --tmp-path=/tmp/blobfusetmp.$1.${container} -o attr_timeout=240 -o negative_timeout=120 --config-file=${ConfigDir}/${container} --log-level=LOG_WARNING --file-cache-timeout-in-seconds=120 -o ro -o nonempty
                         fi
-                        if [ "$?" != "0" ]; then
-                                echo "************************* ERROR 010: Unable to Mount. Check Data in Config file DATALAKE, EXIT *************************"
+                        if [ $? != "0" ] || [ $? != "1" ]; then
+                                echo "************************* `date +%Y%m%d.%T` ERROR 010: Unable to Mount. Check Data in Config file DATALAKE, EXIT *************************"
                                 break
                         fi
-                        echo !!!!! $task blog fuse mount of container ${container} of account $blob !!!!!
+                        echo !!!!! `date +%Y%m%d.%T` $task blog fuse mount of container ${container} of account $blob !!!!!
                         echo
                         echo !!!!! Container size !!!!!
                         du -hs ${ServiceBackupDir}/$1/${container}
@@ -95,16 +92,5 @@ do
         fi
 done  < ${ConfigDir}/swoconfig
 
-
-if [ $? != "0" ] || [ $? != "1" ]; then
-        echo -e "\n"
-        echo !!!!! `date +%Y%m%d.%T` swobackup for service  $SERVICE_TYPE finished WRONG !!!!!
-        echo "*********************************** FINISHED swobackup.sh ver ${version} *****************************"
-        exit 1
-else
-        echo -e "\n"
-        echo !!!!! `date +%Y%m%d.%T` swobackup for service  $SERVICE_TYPE finished SUCCESSFULLY !!!!!
-        echo "*********************************** FINISHED swobackup.sh ver ${version} ************************************"
-fi
 # Logout
 az logout
