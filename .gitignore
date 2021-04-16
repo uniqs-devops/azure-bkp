@@ -3,7 +3,7 @@
 # Tar file
 *.tar
 # Intermediate files
-setup.sh
-resource
+src/avamar/setup.sh
+src/avamar/resource
 # Output folder
 src/dockerfiles/*
