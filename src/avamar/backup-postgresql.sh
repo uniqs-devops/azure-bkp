@@ -90,7 +90,7 @@ do
                                 dbs=(${tags[1]})
                         fi
                 else
-                        dbs=(`az postgres db list  --resource-group $RESOURCEGROUP --server-name $1 -o table | tail -n +3 | awk {'print $4'} | grep -v azure_maintenance | grep -v azure_sys`)
+                        dbs=(`az postgres db list  --resource-group $RESOURCEGROUP --server-name $1 -o table | tail -n +3 | awk {'print $4'} | grep -v azure_maintenance | grep -v azure_sys | grep -v postgres`)
                         username=$USER_FIX
                         task=$TASK_FIX
                         secret=$SECRET_FIX
@@ -102,31 +102,31 @@ do
                         server=$1.postgres.database.azure.com
                 fi
                 ERROR=0
-                                if [ $KEYVAULTSECUREACCESS = "YES" ]; then
-                                                echo !!!!! Processing token from Keyvault !!!!!
-                                                response=$(curl 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fvault.azure.net' -H Metadata:true -s)
-                                                if [ ${response:2:5} == "error" ]; then
-                                                                echo "****************************** ERROR 001 Getting token from KeyVault ******************************"
-                                                                ERROR=1
-                                                                break
-                                                fi
-                                                access_token=$(echo $response | python3 -c 'import sys, json; print (json.load(sys.stdin)["access_token"])')
-                                                echo !!!!! Processing value from Keyvault !!!!!
-                                                response=$(curl https://${KeyVault}.vault.azure.net/secrets/$secret?api-version=2016-10-01 -s -H "Authorization: Bearer ${access_token}")
-                                                if [ ${response:2:5} == "error" ]; then
-                                                                echo "****************************** ERROR 002 Obtaining key value from KeyVault ******************************"
-                                                                ERROR=2
-                                                                break
-                                                fi
-                                                echo !!!!! Getting secret from Keyvault LIST priv !!!!!
-                                                pass=$(echo $response | python3 -c 'import sys, json; print (json.load(sys.stdin)["value"])')
-                                else
-                                                echo !!!!! Getting secret from Keyvault GET priv !!!!!
-                                                pass=$(az keyvault secret show --name $secret --vault-name ${KeyVault} | jq -r '.value')
-                                fi
+                if [ $KEYVAULTSECUREACCESS = "YES" ]; then
+                        echo !!!!! Processing token from Keyvault !!!!!
+                        response=$(curl 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fvault.azure.net' -H Metadata:true -s)
+                        if [ ${response:2:5} == "error" ]; then
+                	        echo "****************************** ERROR 001 Getting token from KeyVault ******************************"
+                        	ERROR=1
+                                break
+                        fi
+                       	        access_token=$(echo $response | python3 -c 'import sys, json; print (json.load(sys.stdin)["access_token"])')
+                        	echo !!!!! Processing value from Keyvault !!!!!
+ 		                response=$(curl https://${KeyVault}.vault.azure.net/secrets/$secret?api-version=2016-10-01 -s -H "Authorization: Bearer ${access_token}")
+               		        if [ ${response:2:5} == "error" ]; then
+                                       echo "****************************** ERROR 002 Obtaining key value from KeyVault ******************************"
+                                       ERROR=2
+                                       break
+                        fi
+                        echo !!!!! Getting secret from Keyvault LIST priv !!!!!
+                        pass=$(echo $response | python3 -c 'import sys, json; print (json.load(sys.stdin)["value"])')
+                else
+                        echo !!!!! Getting secret from Keyvault GET priv !!!!!
+                        pass=$(az keyvault secret show --name $secret --vault-name ${KeyVault} | jq -r '.value')
+                fi
                 for db in ${dbs[@]}; do
-                                                echo PGPASSWORD=******** pg_dump -Fc -v --host=$server --username=$username@$server --dbname=$db -f ${BackupDir}/$server.$db.$task.$(date +%Y%m%d%H%M%S).dump
-                        PGPASSWORD=${pass} pg_dump -Fc -v --host=$server --username=$username@$server --dbname=$db -f ${BackupDir}/$server.$db.$task.$(date +%Y%m%d%H%M%S).dump
+                        echo PGPASSWORD=******** PGSSLMODE=require pg_dump -Fc -v --host=$server --username=$username@$server --dbname=$db -f ${BackupDir}/$server.$db.$task.$(date +%Y%m%d%H%M%S).dump
+                        PGPASSWORD=${pass} PGSSLMODE=require pg_dump -Fc -v --host=$server --username=$username@$server --dbname=$db -f ${BackupDir}/$server.$db.$task.$(date +%Y%m%d%H%M%S).dump
                         if [ "$?" != "0" ] ; then
                                 echo "******************** ERROR 009: Wrong Data in Config file POSTGRES, EXIT *********************"
                                 ERROR=9
@@ -140,7 +140,6 @@ do
                 done
         fi
 done  < ${ConfigDir}/swoconfig
-
 
 if [ $? != "0" ] || [ $? != "1" ]; then
         echo -e "\n"
