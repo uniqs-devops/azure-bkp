@@ -27,8 +27,10 @@
 ``` YES to change from default suscription ``` 
 - subscriptionID
 ``` Subuscrition ID ```
-- cers
+- useCerts
 ``` YES if certificate is needed ```
+- cers
+``` Certificate name or * to include all src/packages/DockerEmbebed/certificates/ ```
 - useServicePrincipal
 ``` YES for SPN ```
 - servicePrincipalClientId
