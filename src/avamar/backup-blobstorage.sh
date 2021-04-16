@@ -62,7 +62,7 @@ cat ${ConfigDir}/swoconfig | while read linea
 do
         set -a $linea " "
         if [ "${1::1}" != "#" ] ; then
-                key="$(az storage account keys list -n $1 --query "[0].{value:value}" --output tsv)"
+                key="$(az keyvault secret show --name $secret --vault-name ${KeyVault} | jq -r '.value')"
                 containers="$(az storage container list --account-name $1 --account-key $key --query "[].{name:name}" --output tsv)"
                 ERROR=0
                 for container in ${containers[@]}; do
