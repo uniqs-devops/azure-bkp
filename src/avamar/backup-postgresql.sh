@@ -44,7 +44,12 @@ USEFQDN=`cat $ConfigDir/dps-setup.json  | jq -r '.useFQDN'`
 KEYVAULTSECUREACCESS=`cat $ConfigDir/dps-setup.json  | jq -r '.useKeyVaultSecureAccess'`
 
 # AZ Login
-az login --service-principal -u http://PaaSBackup --password $ConfigDir/azurelogin.pem --tenant $TENANID
+if [ $USERSERVICEPRINCIPAL = "YES" ]; then 
+	az login --service-principal --username $SERVICEPRINCIPALCLIENTID --password  $SERVICEPRINCIPALCLIENTSECRET --tenant $TENANID
+else
+	az login --service-principal -u http://PaaSBackup -p $ConfigDir/azurelogin.pem --tenant $TENANID
+fi
+if [ $CHANGEDEFAULTSUSCRIPTION = "YES" ]; then az account set --subscription $SUSCRIPTIONID; fi
 
 if [ ! -d $RootBackupDir ]; then mkdir mkdir ${RootBackupDir}; fi
 if [ ! -d ${RootBackupDir} ]; then mkdir ${RootBackupDir}; fi
