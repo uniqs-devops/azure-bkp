@@ -2,3 +2,8 @@
 *.log
 # Tar file
 *.tar
+# Intermediate files
+setup.sh
+resource
+# Output folder
+$HOME/azure-bkp/src/dockerfiles
