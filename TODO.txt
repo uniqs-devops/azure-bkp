@@ -10,7 +10,7 @@
 
 # Prioridad media
 
-- Adminir multiples certificados
+- Admitir multiples certificados
 
 # Prioridad baja
 
