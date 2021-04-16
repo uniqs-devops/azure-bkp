@@ -2,8 +2,3 @@
 *.log
 # Tar file
 *.tar
-# Intermediate files
-src/avamar/setup.sh
-src/avamar/resource
-# Output folder
-src/dockerfiles/*
