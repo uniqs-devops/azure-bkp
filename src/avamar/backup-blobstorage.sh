@@ -54,17 +54,38 @@ echo
 echo "*********************************** SEARCHING cloud resources **************************************"
 echo
 az storage account list --query "[].{name:name}" --output tsv > ${ConfigDir}/swoconfig
-key="$(az keyvault secret show --name $secret --vault-name ${KeyVault} | jq -r '.value')"
+if [ $KEYVAULTSECUREACCESS = "YES" ]; then
+	echo !!!!! Processing token from Keyvault !!!!!
+	response=$(curl 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fvault.azure.net' -H Metadata:true -s)
+	if [ ${response:2:5} == "error" ]; then
+		echo "****************************** ERROR 001 Getting token from KeyVault ******************************"
+		ERROR=1
+		break
+	fi
+                access_token=$(echo $response | python3 -c 'import sys, json; print (json.load(sys.stdin)["access_token"])')
+                echo !!!!! Processing value from Keyvault !!!!!
+ 		response=$(curl https://${KeyVault}.vault.azure.net/secrets/$secret?api-version=2016-10-01 -s -H "Authorization: Bearer ${access_token}")
+               	if [ ${response:2:5} == "error" ]; then
+                	echo "****************************** ERROR 002 Obtaining key value from KeyVault ******************************"
+                        ERROR=2
+                        break
+		fi
+                echo !!!!! Getting secret from Keyvault LIST priv !!!!!
+                pass=$(echo $response | python3 -c 'import sys, json; print (json.load(sys.stdin)["value"])')
+else
+                echo !!!!! Getting secret from Keyvault GET priv !!!!!
+                pass=$(az keyvault secret show --name $secret --vault-name ${KeyVault} | jq -r '.value')
+fi
 cat ${ConfigDir}/swoconfig | while read linea
 do
         set -a $linea " "
         if [ "${1::1}" != "#" ] ; then
-                containers="$(az storage container list --account-name $1 --account-key $key --query "[].{name:name}" --output tsv)"
+                containers="$(az storage container list --account-name $1 --account-key {$pass} --query "[].{name:name}" --output tsv)"
                 ERROR=0
                 for container in ${containers[@]}; do
                         echo !!!!! Mounting container $container of storage account $1 !!!!!
                         echo "accountName ${1}" > ${ConfigDir}/${container}
-                        echo "accountKey ${key}" >> ${ConfigDir}/${container}
+                        echo "accountKey ${pass}" >> ${ConfigDir}/${container}
                         if [ $USERSERVICEPRINCIPAL = "YES" ]; then
                                 echo "authType SPN" >> ${ConfigDir}/${container}
                                 echo "servicePrincipalClientId $SERVICEPRINCIPALCLIENTID" >> ${ConfigDir}/${container}
