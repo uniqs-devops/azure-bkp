@@ -60,8 +60,12 @@ function prebuild {
         cp templates/Azure-header.dockerfile temp.dockerfile
         if [ $USECERTS = "YES" ]; then
                 echo "#Certs configs" >> temp.dockerfile
-                echo "COPY src/packages/DockerEmbebed/certificates/$CERTFILE /etc/pki/ca-trust/source/anchors/" >> temp.dockerfile
-                echo "RUN update-ca-trust" >> temp.dockerfile
+		if [ $CERTFILE = "*" ]; then
+		    echo "COPY src/packages/DockerEmbebed/certificates/* /etc/pki/ca-trust/source/anchors/" >> temp.dockerfile
+		else	
+	    	    echo "COPY src/packages/DockerEmbebed/certificates/$CERTFILE /etc/pki/ca-trust/source/anchors/" >> temp.dockerfile
+                fi
+		echo "RUN update-ca-trust" >> temp.dockerfile
         fi
         if [ $USEPROXY = "YES" ]; then
                 echo "#Proxy config" >> temp.dockerfile
