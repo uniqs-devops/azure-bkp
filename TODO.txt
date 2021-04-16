@@ -10,15 +10,7 @@
 
 # Prioridad media
 
-- Si "proxy": {
-    "useProxy": "YES"
-    
-    Hacer que docker build en dps-setup.sh aceptarte esto desde una clave json del grupo "proxy" para IP y un parsing para "proxy.proxyHttpName"
-
-    --add-host proxy.threatpulse.net:98.158.252.164
-    	
-- Sincronizar este repo con GitLab para permitir incrustar imagen de CentOS y evitar salir a internet con git clone.
-
+- Adminir multiples certificados
 
 # Prioridad baja
 
