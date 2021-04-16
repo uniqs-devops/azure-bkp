@@ -31,8 +31,9 @@ PROXYHTTPSNAME=`cat dps-setup.json  | jq -r '.proxy.proxyHttpsName'`
 NOPROXY=`cat dps-setup.json  | jq -r '.proxy.noProxy'`
 USECERTS=`cat dps-setup.json  | jq -r '.certs.useCerts'`
 CERTFILE=`cat dps-setup.json  | jq -r '.certs.certFile'`
-Dockerfolder=src/dockerfiles
+Dockerfolder=src/dockerfiles/current
 DockerfileName=$Dockerfolder/$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
+if [ -f $DockerfileName ]; then mv $DockerfileName $Dockerfolder/old
 if [ $USEAVAMAR = "YES" ]; then
         DockerfileName=$Dockerfolder/avamar.$AVEVERSION.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
 else
