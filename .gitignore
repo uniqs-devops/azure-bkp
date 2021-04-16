@@ -6,4 +6,4 @@
 setup.sh
 resource
 # Output folder
-$HOME/azure-bkp/src/dockerfiles
+src/dockerfiles/*
