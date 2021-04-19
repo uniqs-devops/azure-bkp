@@ -104,7 +104,7 @@ do
                         if [ $DATABASE_FIX = "ALL" ]; then
                             dbs=(`az postgres db list  --resource-group $RESOURCEGROUP --server-name $1 -o table | tail -n +3 | awk {'print $4'} | grep -v azure_maintenance | grep -v azure_sys | grep -v postgres`)
                         else
-                            dbs=(${tags[1]})
+                            dbs=$DATABASE_FIX
                         fi
                 fi
                 if [ $USEFQDN = "NO" ]; then
@@ -153,8 +153,8 @@ do
                         echo
                       done
                 else
-                        echo PGPASSWORD=******** PGSSLMODE=require pg_dumpall --host=$server --username=$username@$server -f ${BackupDir}/$server.$task.$(date +%Y%m%d%H%M%S).dump
-                        PGPASSWORD=${pass} PGSSLMODE=require pg_dumpall --host=$server --username=$username@$server -f ${BackupDir}/$server.$task.$(date +%Y%m%d%H%M%S).dump
+                        echo PGPASSWORD=******** PGSSLMODE=require pg_dumpall --host=$server --username=$username@$server --exclude-database=azure_sys --exclude-database=azure_maintenance -f ${BackupDir}/$server.$task.$(date +%Y%m%d%H%M%S).dump
+                        PGPASSWORD=${pass} PGSSLMODE=require pg_dumpall --host=$server --username=$username@$server --exclude-database=azure_sys --exclude-database=azure_maintenance -f ${BackupDir}/$server.dumpall.$task.$(date +%Y%m%d%H%M%S).dump
                 fi
         fi
 done  < ${ConfigDir}/swoconfig
