@@ -33,7 +33,7 @@ USECERTS=`cat dps-setup.json  | jq -r '.certs.useCerts'`
 CERTFILE=`cat dps-setup.json  | jq -r '.certs.certFile'`
 Dockerfolder=src/dockerfiles/current
 DockerfileName=$Dockerfolder/$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
-if [ -f $DockerfileName ]; then mv $DockerfileName $Dockerfolder/old
+if [ -f $DockerfileName ]; then mv $DockerfileName $Dockerfolder/old; fi
 if [ $USEAVAMAR = "YES" ]; then
         DockerfileName=$Dockerfolder/avamar.$AVEVERSION.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
 else
@@ -93,15 +93,17 @@ function prebuild {
       echo "echo '00 09 * * 1-5 /$INSTALLDIR/etc/scripts/backup-$DOCKERTYPE.sh' >> /var/spool/cron/root" >> src/avamar/setup.sh
     fi
     ##if [ $DOCKERTYPE != "keyvault" ]; then
-        cat templates/Azure-template-$DOCKERTYPE.dockerfile >> temp.dockerfile
+      cat templates/Azure-template-$DOCKERTYPE.dockerfile >> temp.dockerfile
     ##fi
     if [ $MOUNTTYPE = "ddboostfs" ]; then
-        # Ddboostfs & Lockbox
-      sudo /opt/emc/boostfs/bin/boostfs lockbox add-hosts $CONTAINER_NAME;  cp /opt/emc/boostfs/lockbox/boostfs.lockbox  src/ddboostfs/boostfs.lockbox
-          echo "#/opt/emc/boostfs/bin/boostfs mount -d $DD_SERVER -s $STORAGE_UNIT /$RootBackupDir" >> src/avamar/setup.sh
-          echo "echo '$DD_SERVER:/$STORAGE_UNIT /$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/avamar/setup.sh
-          cat templates/Azure-template-DDBoostFS.dockerfile >> temp.dockerfile
-        fi
+    # Ddboostfs & Lockbox
+      echo "read -n 1 -r -s -p $'Creating lockbox file, press enter to continue...\n'" >> src/avamar/post_install.sh
+      echo "/opt/emc/boostfs/bin/boostfs lockbox set -u $DDBOOST_USER -d $DD_SERVER -s $STORAGE_UNIT" >> src/avamar/post_install.sh
+      echo "read -n 1 -r -s -p $'Adding line in /etc/fstab, press enter to continue...\n'" >> src/avamar/post_install.sh
+      echo "echo '$DD_SERVER:/$STORAGE_UNIT /$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/avamar/post_install.sh
+      echo "read -n 1 -r -s -p $'Mounting through /etc/fstab, press enter to continue...\n'" >> src/avamar/post_install.sh
+      cat templates/Azure-template-DDBoostFS.dockerfile >> temp.dockerfile
+    fi
     echo "COPY src/avamar/setup.sh /$INSTALLDIR" >> temp.dockerfile
     echo "RUN chmod 755 /$INSTALLDIR/setup.sh" >> temp.dockerfile
     echo "RUN /$INSTALLDIR/setup.sh" >> temp.dockerfile

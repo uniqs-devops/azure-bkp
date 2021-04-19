@@ -2,11 +2,11 @@
   "cloudProvider": "azure",
   "dockerType": "postgresql",
   "dockerTypeName": "PG",
-  "keyVaultName": "keyvaultautoproxyrg02",
+  "keyVaultName": "keyvaultautoproxyrg03",
   "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
   "resourceGroup": "AutoProxyRG",
   "useTags": "NO",
-  "useFQDN": "NO",
+  "useFQDN": "YES",
   "useKeyVaultSecureAccess": "NO",
   "proxy": {
     "useProxy": "NO",
@@ -31,7 +31,7 @@
         "RootBackupDir": "Backup"
   },
   "ddboosfs": {
-    "storageUnit": "PaaSbackup"
+    "storageUnit": "PaasBackup"
   },
   "container": {
     "containerName": "dockerpg-01.pcalvo.local"
@@ -75,7 +75,7 @@
     "fixValues": [
     {
       "type": "user",
-      "value": "avamar-backup"
+      "value": "avamar_backup"
     },
     {
       "type": "port",
@@ -83,7 +83,7 @@
     },
     {
       "type": "database",
-      "value": "*"
+      "value": "ALL"
     },
     {
       "type": "task",
@@ -93,5 +93,9 @@
       "type": "secret",
       "value": "postgresqlsecret"
     }
-  ]
+  ],
+"postgresql": {
+    "useDumpall": "YES"
 }
+}
+
