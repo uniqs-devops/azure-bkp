@@ -18,6 +18,10 @@
     "useCerts": "NO",
     "certFile": "ca-proxy_threatpulse_net"
   },
+  "EndPoints": {
+    "useEndPoints": "YES",
+    "EndPoint": "180.44.224.70"
+  },
   "avamar": {
     "useAvamar": "NO",
     "avamarServerName": "cibp1weuaval001.shared.azure.scib.gs.corp",

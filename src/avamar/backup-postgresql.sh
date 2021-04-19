@@ -65,9 +65,11 @@ if [ ! -d ${ServiceBackupDir} ]; then mkdir ${ServiceBackupDir}; fi
 if [ ! -d ${ServiceBackupDir}/backups ]; then mkdir ${ServiceBackupDir}/backups; fi
 if [ ! -d ${ServiceBackupDir}/restore ]; then mkdir ${ServiceBackupDir}/restore; fi
 if [ ! -d ${ServiceBackupDir}/old ]; then mkdir ${ServiceBackupDir}/old; fi
-find ${LogDir}/* -mtime +15 -type f -exec rm {} \;
-find ${RootBackupDir}/* -mtime +15 -type f -exec rm {} \;
-
+find ${LogDir}/* -mtime +5 -type f -exec rm {} \;
+files=$(shopt -s nullglob dotglob; echo $BackupDir/*)
+if (( ${#files} )); then mv ${BackupDir}/* ${OldBackupDir}; fi
+oldfiles=$(shopt -s nullglob dotglob; echo $BackupDir/*)
+if (( ${#oldfiles} )); then find ${OldBackupDir}/* -mtime +5 -type f -exec rm {} \;; fi
 if [ ! -d $ConfigDir ]; then
         echo $ConfigDir
         echo "************************* ERROR 006: Config folder not found. EXIT *************************"
@@ -153,7 +155,7 @@ do
                         echo
                       done
                 else
-                        echo PGPASSWORD=******** PGSSLMODE=require pg_dumpall --host=$server --username=$username@$server --exclude-database=azure_sys --exclude-database=azure_maintenance -f ${BackupDir}/$server.$task.$(date +%Y%m%d%H%M%S).dump
+                       echo PGPASSWORD=******** PGSSLMODE=require pg_dumpall --host=$server --username=$username@$server --exclude-database=azure_sys --exclude-database=azure_maintenance -f ${BackupDir}/$server.$task.$(date +%Y%m%d%H%M%S).dump
                         PGPASSWORD=${pass} PGSSLMODE=require pg_dumpall --host=$server --username=$username@$server --exclude-database=azure_sys --exclude-database=azure_maintenance -f ${BackupDir}/$server.dumpall.$task.$(date +%Y%m%d%H%M%S).dump
                 fi
         fi
