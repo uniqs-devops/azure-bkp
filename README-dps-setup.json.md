@@ -74,4 +74,3 @@
 - postgresql
 ``` YES for pg_dumpall, NO for pg_dump ```
 ``` PostgreSQL related ```
-- 
