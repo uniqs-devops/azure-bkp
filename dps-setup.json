@@ -18,6 +18,11 @@
     "useCerts": "NO",
     "certFile": "ca-proxy_threatpulse_net"
   },
+  "servicePrincipal": {
+    "useServicePrincipal": "NO",
+    "servicePrincipalClientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "servicePrincipalClientSecret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
   "EndPoints": {
     "useEndPoints": "YES",
     "EndPoint": "180.44.224.70"
