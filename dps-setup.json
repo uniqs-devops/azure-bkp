@@ -1,7 +1,7 @@
 {
   "cloudProvider": "azure",
-  "dockerType": "postgresql",
-  "dockerTypeName": "PG",
+  "dockerType": "cvision",
+  "dockerTypeName": "CV",
   "keyVaultName": "keyvaultautoproxyrg03",
   "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
   "resourceGroup": "AutoProxyRG",
@@ -19,7 +19,7 @@
     "certFile": "ca-proxy_threatpulse_net"
   },
   "EndPoints": {
-    "useEndPoints": "YES",
+    "useEndPoints": "NO",
     "EndPoint": "180.44.224.70"
   },
   "avamar": {
@@ -38,19 +38,19 @@
     "storageUnit": "PaasBackup"
   },
   "container": {
-    "containerName": "dockerpg-01.pcalvo.local"
+    "containerName": "dockercv-01.pcalvo.local"
   },
   "azureResources": [
     {
-      "type": "PG",
-      "resourceType": "Microsoft.DBforPostgreSQL/servers"
+      "type": "CV",
+      "resourceType": "Microsoft.CognitiveServices/accounts"
     },
     {
-      "type": "PG",
+      "type": "CV",
       "resourceType": null
     },
     {
-      "type": "PG",
+      "type": "CV",
       "resourceType": null
     }
   ],
