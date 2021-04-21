@@ -59,6 +59,8 @@
 ``` DDBoostFS or local mount point on container ```
 - storageUnit
 ``` Data Domain Storage Unit used to hold data ```
+- ddboostuser
+``` ddboost user used to connect this container to DD ```
 - containerName
 ``` FQDN of contanier used to register this client on Avamar. Add forward and reverse DNS records to DNS Server ```
 - resourceType

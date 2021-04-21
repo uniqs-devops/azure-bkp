@@ -13,7 +13,7 @@ function environment {
 CONTAINER_NAME=`cat dps-setup.json  | jq -r '.container.containerName'`
 RESOURCES=`jq '.azureResources[] | select(.type=="PG" and .resourceType != null)|.resourceType' dps-setup.json | sed 's/"//g'`
 DD_SERVER=`cat dps-setup.json  | jq -r '.datadomain.datadomainServerName'`
-DDBOOST_USER=`cat dps-setup.json  | jq -r '.datadomain.ddboostuser'`
+DDBOOST_USER=`cat dps-setup.json  | jq -r '.ddboosfs.ddboostuser'`
 STORAGE_UNIT=`cat dps-setup.json  | jq -r '.ddboosfs.storageUnit'`
 RootBackupDir=`cat dps-setup.json  | jq -r '.datadomain.RootBackupDir'`
 AVAMAR_SERVER=`cat dps-setup.json  | jq -r '.avamar.avamarServerName'`

@@ -37,11 +37,11 @@
   },
   "datadomain": {
     "datadomainServerName": "cibp1weuaval003.shared.azure.scib.gs.corp",
-    "ddboostuser": "ddbost",
     "mountType": "ddboostfs",
     "RootBackupDir": "Backup"
   },
   "ddboosfs": {
+    "ddboostuser": "ddbost",
     "storageUnit": "PaasBackup"
   },
   "container": {
