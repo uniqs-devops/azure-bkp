@@ -13,9 +13,9 @@ src/avamar/ : Avamar config files. Backup scripts
 
 src/azure/  : Pem file to avoid expouse password 
 
-src/ddboostfs/ : DDBoost FS lockbox file  
-
 src/dockerfiles/ : Docker file work space
+
+src/images/ : Images to be load using docker load
 
 packages/AvamarServerPackages : Unused
 

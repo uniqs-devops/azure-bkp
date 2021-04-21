@@ -17,6 +17,8 @@
 ``` tags or default values using fixValues ```
 - useFQDN
 ``` FQDN or IP through nslookup ```
+- useKeyVaultSecureAccess
+``` Keyvault access using curl or az cli ```
 - useProxy
 ``` YES if docker file needs proxy ENV variables ```
 - proxyHttpName and proxyHttpsName
@@ -37,6 +39,10 @@
 ``` Service principal client id```
 - servicePrincipalClientSecret
 ``` Service principal client password```
+- useEndPoints
+``` YES if end points are used```
+- EndPoint
+``` End point FQDN or IP```
 - useAvamar
 ``` Use avamar to store backup data ```
 - avamarClientPort
@@ -65,3 +71,6 @@
 ``` Type of tag```
 - fixValues \ Type
 ``` Hardcoded value ```
+- postgresql
+``` YES for pg_dumpall, NO for pg_dump ```
+``` PostgreSQL related ```
