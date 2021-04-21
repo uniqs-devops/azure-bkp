@@ -13,6 +13,7 @@ function environment {
 CONTAINER_NAME=`cat dps-setup.json  | jq -r '.container.containerName'`
 RESOURCES=`jq '.azureResources[] | select(.type=="PG" and .resourceType != null)|.resourceType' dps-setup.json | sed 's/"//g'`
 DD_SERVER=`cat dps-setup.json  | jq -r '.datadomain.datadomainServerName'`
+DDBOOST_USER=`cat dps-setup.json  | jq -r '.datadomain.ddboostuser'`
 STORAGE_UNIT=`cat dps-setup.json  | jq -r '.ddboosfs.storageUnit'`
 RootBackupDir=`cat dps-setup.json  | jq -r '.datadomain.RootBackupDir'`
 AVAMAR_SERVER=`cat dps-setup.json  | jq -r '.avamar.avamarServerName'`
@@ -31,9 +32,8 @@ PROXYHTTPSNAME=`cat dps-setup.json  | jq -r '.proxy.proxyHttpsName'`
 NOPROXY=`cat dps-setup.json  | jq -r '.proxy.noProxy'`
 USECERTS=`cat dps-setup.json  | jq -r '.certs.useCerts'`
 CERTFILE=`cat dps-setup.json  | jq -r '.certs.certFile'`
-Dockerfolder=src/dockerfiles/current
+Dockerfolder=src/dockerfiles
 DockerfileName=$Dockerfolder/$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
-if [ -f $DockerfileName ]; then mv $DockerfileName $Dockerfolder/old; fi
 if [ $USEAVAMAR = "YES" ]; then
         DockerfileName=$Dockerfolder/avamar.$AVEVERSION.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
 else
@@ -44,10 +44,10 @@ function setup {
 # Install packeges needed by DCI
     sudo yum install -y yum-utils jq docker
     if [ -f src/packages/DockerEmbebed/azcli/azure-cli-*.rpm ] ; then
-	sudo yum install -y src/packages/DockerEmbebed/azcli/azure-cli-*.rpm
+        sudo yum install -y src/packages/DockerEmbebed/azcli/azure-cli-*.rpm
     else
-    	sudo cp src/azure/azure-cli.repo /etc/yum.repos.d/azure-cli.repo; sudo yum install -y azure-cli
-    fi	
+        sudo cp src/azure/azure-cli.repo /etc/yum.repos.d/azure-cli.repo; sudo yum install -y azure-cli
+    fi
     if [ -f src/images/centos.tar ] && [ ! `sudo docker images | grep centos | awk '{print $3}'` ] ; then
             sudo docker load -i src/images/centos.tar  centos:latest
    fi
@@ -61,12 +61,8 @@ function prebuild {
         cp templates/Azure-header.dockerfile temp.dockerfile
         if [ $USECERTS = "YES" ]; then
                 echo "#Certs configs" >> temp.dockerfile
-		if [ $CERTFILE = "*" ]; then
-		    echo "COPY src/packages/DockerEmbebed/certificates/* /etc/pki/ca-trust/source/anchors/" >> temp.dockerfile
-		else	
-	    	    echo "COPY src/packages/DockerEmbebed/certificates/$CERTFILE /etc/pki/ca-trust/source/anchors/" >> temp.dockerfile
-                fi
-		echo "RUN update-ca-trust" >> temp.dockerfile
+                echo "COPY src/packages/DockerEmbebed/certificates/$CERTFILE /etc/pki/ca-trust/source/anchors/" >> temp.dockerfile
+                echo "RUN update-ca-trust" >> temp.dockerfile
         fi
         if [ $USEPROXY = "YES" ]; then
                 echo "#Proxy config" >> temp.dockerfile
@@ -78,43 +74,44 @@ function prebuild {
         fi
     cat templates/Azure-template.dockerfile >> temp.dockerfile
     #
-    echo "#/bin/bash" > src/avamar/setup.sh
-    echo "mkdir -p /$RootBackupDir" >> src/avamar/setup.sh
+    echo "#/bin/bash" > src/avamar/post_install.sh
+    echo "read -n 1 -r -s -p $'Root backup dir creation, press enter to continue...\n'" > src/avamar/post_install.sh
+    echo "mkdir -p /$RootBackupDir" >> src/avamar/post_install.sh
     if [ $USEAVAMAR = "YES" ]; then
       DockerfileName=$Dockerfolder/avamar.$AVEVERSION.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
       # .avagent
       echo "--hostname="$CONTAINER_NAME > src/avamar/.avagent
       echo "--listenport="$PORT >> src/avamar/.avagent
       # Avamar
-      echo "/$INSTALLDIR/etc/avagent.d register $AVAMAR_SERVER /$AVAMAR_DOMAIN" >> src/avamar/setup.sh
+      echo "read -n 1 -r -s -p $'Avamar client registration on server $AVAMAR_SERVER domain /$AVAMAR_DOMAIN, press enter to continue...\n'" >> src/avamar/post_install.sh
+      echo "/$INSTALLDIR/bin/avregister" >> src/avamar/post_install.sh
+      echo "read -n 1 -r -s -p $'Agent restart, press enter to continue...\n'" >> src/avamar/post_install.sh
+      echo "/etc/init.d/avagent restart" >> src/avamar/post_install.sh
       cat templates/Azure-template-Avamar.dockerfile >> temp.dockerfile
     else
       DockerfileName=$Dockerfolder/cron.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
-      echo "echo '00 09 * * 1-5 /$INSTALLDIR/etc/scripts/backup-$DOCKERTYPE.sh' >> /var/spool/cron/root" >> src/avamar/setup.sh
+      echo "echo Crontab install" > src/avamar/post_install.sh
+      echo "echo '00 09 * * 1-5 /$INSTALLDIR/etc/scripts/backup-$DOCKERTYPE.sh' >> /var/spool/cron/root" >> src/avamar/post_install.sh
     fi
     ##if [ $DOCKERTYPE != "keyvault" ]; then
-      cat templates/Azure-template-$DOCKERTYPE.dockerfile >> temp.dockerfile
+        cat templates/Azure-template-$DOCKERTYPE.dockerfile >> temp.dockerfile
     ##fi
     if [ $MOUNTTYPE = "ddboostfs" ]; then
-    # Ddboostfs & Lockbox
-      echo "read -n 1 -r -s -p $'Creating lockbox file, press enter to continue...\n'" >> src/avamar/post_install.sh
-      echo "/opt/emc/boostfs/bin/boostfs lockbox set -u $DDBOOST_USER -d $DD_SERVER -s $STORAGE_UNIT" >> src/avamar/post_install.sh
-      echo "read -n 1 -r -s -p $'Adding line in /etc/fstab, press enter to continue...\n'" >> src/avamar/post_install.sh
-      echo "echo '$DD_SERVER:/$STORAGE_UNIT /$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/avamar/post_install.sh
-      echo "read -n 1 -r -s -p $'Mounting through /etc/fstab, press enter to continue...\n'" >> src/avamar/post_install.sh
-      cat templates/Azure-template-DDBoostFS.dockerfile >> temp.dockerfile
-    fi
-    echo "COPY src/avamar/setup.sh /$INSTALLDIR" >> temp.dockerfile
-    echo "RUN chmod 755 /$INSTALLDIR/setup.sh" >> temp.dockerfile
-    echo "RUN /$INSTALLDIR/setup.sh" >> temp.dockerfile
+        # Ddboostfs & Lockbox
+          echo "read -n 1 -r -s -p $'Creating lockbox file, press enter to continue...\n'" >> src/avamar/post_install.sh
+          echo "/opt/emc/boostfs/bin/boostfs lockbox set -u $DDBOOST_USER -d $DD_SERVER -s $STORAGE_UNIT" >> src/avamar/post_install.sh
+          echo "read -n 1 -r -s -p $'Adding line in /etc/fstab, press enter to continue...\n'" >> src/avamar/post_install.sh
+          echo "echo '$DD_SERVER:/$STORAGE_UNIT /$RootBackupDir boostfs defaults,_netdev,bfsopt(nodsp.small_file_check=0,app-info="DDBoostFS") 0 0' >> /etc/fstab" >> src/avamar/post_install.sh
+          echo "read -n 1 -r -s -p $'Mounting through /etc/fstab, press enter to continue...\n'" >> src/avamar/post_install.sh
+          echo "mount -a" >> src/avamar/post_install.sh
+          cat templates/Azure-template-DDBoostFS.dockerfile >> temp.dockerfile
+        fi
+    echo "COPY src/avamar/post_install.sh /$INSTALLDIR" >> temp.dockerfile
+    echo "RUN chmod 755 /$INSTALLDIR/post_install.sh" >> temp.dockerfile
     echo "# Cleanup /tmp folder, agent start  and Configuration persist" >> temp.dockerfile
     echo "RUN rm -f /tmp/*.rpm" >> temp.dockerfile
     # About ENTRYPOINTs
-    if [ $USEAVAMAR = "YES" ]; then
-        echo "ENTRYPOINT mount -a &&  [ -f /etc/init.d/avagent ] && /etc/init.d/avagent start && /bin/bash" >> temp.dockerfile
-    else
-        echo "ENTRYPOINT mount -a && /bin/bash" >> temp.dockerfile
-    fi
+    echo "ENTRYPOINT /bin/bash" >> temp.dockerfile
     sed -i -e "s/DUMMYINSTALLDIR/$INSTALLDIR/g" temp.dockerfile
     sed -i -e "s/PORT/$PORT/g" temp.dockerfile
     sed -i -e "s/DUMMYVERSION/$AVEVERSION/g" temp.dockerfile
@@ -163,17 +160,17 @@ function deploy-here {
     if [ $DOCKERTYPE = "blobstorage" ]; then
           if [ $USEAVAMAR = "YES" ]; then
                 sudo docker run --hostname $CONTAINER_NAME --name azure-$DOCKERTYPE -d -it --device /dev/fuse -p $PORT:$PORT -p 30001:30001 -p 30002:30002 -p 27000:27000 -p 28001:28001 -p 29000:29000 -p 30001:30001  -p 30003:30003  -p 27000:27000  -P --cap-add SYS_ADMIN  --network host --privileged `sudo docker images | grep $DockerfileName | awk '{print $3}'` /bin/bash
-      else
-            sudo docker run --hostname $CONTAINER_NAME --name azure-$DOCKERTYPE -d -it --device /dev/fuse --cap-add SYS_ADMIN  --network host --privileged `sudo docker images | grep $DockerfileName | awk '{print $3}'` /bin/bash
-          fi
-        else
-          if [ $USEAVAMAR = "YES" ]; then
-        sudo docker run --hostname $CONTAINER_NAME --name azure-$DOCKERTYPE -d -it -p $PORT:$PORT -p 30001:30001 -p 30002:30002 -p 27000:27000 -p 28001:28001 -p 29000:29000 -p 30001:30001  -p 30003:30003  -p 27000:27000 -P --network host  `sudo docker images | grep $DockerfileName | awk '{print $3}'` /bin/bash
+         else
+                sudo docker run --hostname $CONTAINER_NAME --name azure-$DOCKERTYPE -d -it --device /dev/fuse --cap-add SYS_ADMIN  --network host --privileged `sudo docker images | grep $DockerfileName | awk '{print $3}'` /bin/bash
+         fi
     else
-                sudo docker run --hostname $CONTAINER_NAME --name azure-$DOCKERTYPE -d -it --network host  `sudo docker images | grep $DockerfileName | awk '{print $3}'` /bin/bash
-          fi
+         if [ $USEAVAMAR = "YES" ]; then
+                sudo docker run --hostname $CONTAINER_NAME --name azure-$DOCKERTYPE -d -it --device /dev/fuse --cap-add SYS_ADMIN -p $PORT:$PORT -p 30001:30001 -p 30002:30002 -p 27000:27000 -p 28001:28001 -p 29000:29000 -p 30001:30001  -p 30003:30003  -p 27000:27000 -P --network host  `sudo docker images | grep $DockerfileName | awk '{print $3}'` /bin/bash
+        else
+                sudo docker run --hostname $CONTAINER_NAME --name azure-$DOCKERTYPE -d -it --device /dev/fuse --cap-add SYS_ADMIN --network host  `sudo docker images | grep $DockerfileName | awk '{print $3}'` /bin/bash
         fi
-exit		
+    fi
+exit
 }
 
 function deploy-on-host {
