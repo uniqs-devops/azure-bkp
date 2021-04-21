@@ -37,11 +37,11 @@
   },
   "datadomain": {
     "datadomainServerName": "",
-    "ddboostuser": "",
     "mountType": "",
     "RootBackupDir": ""
   },
   "ddboosfs": {
+    "ddboostuser": "",
     "storageUnit": ""
   },
   "container": {
