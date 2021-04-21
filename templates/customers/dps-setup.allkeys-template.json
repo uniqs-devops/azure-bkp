@@ -1,0 +1,104 @@
+{
+  "cloudProvider": "",
+  "dockerType": "",
+  "dockerTypeName": "",
+  "keyVaultName": "",
+  "tenantId": "",
+  "resourceGroup": "",
+  "useTags": "",
+  "useFQDN": "",
+  "useKeyVaultSecureAccess": "",
+  "proxy": {
+    "useProxy": "",
+    "proxyHttpName": "",
+    "proxyHttpsName": "",
+    "noProxy": "",
+  },
+  "certs": {
+    "useCerts": "",
+    "certFile": "",
+  },
+  "servicePrincipal": {
+    "useServicePrincipal": "",
+    "servicePrincipalClientId": "",
+    "servicePrincipalClientSecret": ""
+  },
+  "EndPoints": {
+    "useEndPoints": "",
+    "EndPoint": ""
+  },
+  "avamar": {
+    "useAvamar": "",
+    "avamarServerName": "",
+    "avamarClientPort": "",
+    "avamarDomain": "",
+    "installDir": "",
+    "avamarVersion": ""
+  },
+  "datadomain": {
+    "datadomainServerName": "",
+    "ddboostuser": "",
+    "mountType": "",
+    "RootBackupDir": ""
+  },
+  "ddboosfs": {
+    "storageUnit": ""
+  },
+  "container": {
+    "containerName": ""
+  },
+  "azureResources": [
+    {
+      "type": "",
+      "resourceType": "Microsoft.CognitiveServices/accounts"
+    }
+  ],
+  "backupTags": [
+    {
+      "type": "user",
+      "value": "bck_user"
+    },
+    {
+      "type": "port",
+      "value": "bck_port"
+    },
+    {
+      "type": "database",
+      "value": "bck_database"
+    },
+    {
+      "type": "task",
+      "value": "bck_task"
+    },
+    {
+      "type": "secret",
+      "value": "bck_secret"
+    }
+  ],
+    "fixValues": [
+    {
+      "type": "user",
+      "value": ""
+    },
+    {
+      "type": "port",
+      "value": ""
+    },
+    {
+      "type": "database",
+      "value": ""
+    },
+    {
+      "type": "task",
+      "value": ""
+    },
+    {
+      "type": "secret",
+      "value": ""
+    }
+  ],
+"postgresql": {
+    "useDumpall": ""
+}
+}
+

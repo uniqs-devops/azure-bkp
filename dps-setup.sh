@@ -32,7 +32,7 @@ PROXYHTTPSNAME=`cat dps-setup.json  | jq -r '.proxy.proxyHttpsName'`
 NOPROXY=`cat dps-setup.json  | jq -r '.proxy.noProxy'`
 USECERTS=`cat dps-setup.json  | jq -r '.certs.useCerts'`
 CERTFILE=`cat dps-setup.json  | jq -r '.certs.certFile'`
-Dockerfolder=src/dockerfiles
+Dockerfolder=src/dockerfiles/current
 DockerfileName=$Dockerfolder/$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
 if [ $USEAVAMAR = "YES" ]; then
         DockerfileName=$Dockerfolder/avamar.$AVEVERSION.$CLOUDPROVIDER-$DOCKERTYPE-$MOUNTTYPE.dockerfile
@@ -56,22 +56,24 @@ exit
 
 function prebuild {
     # Get environment
-        environment
+    environment
     # Docker container baseline
-        cp templates/Azure-header.dockerfile temp.dockerfile
-        if [ $USECERTS = "YES" ]; then
-                echo "#Certs configs" >> temp.dockerfile
-                echo "COPY src/packages/DockerEmbebed/certificates/$CERTFILE /etc/pki/ca-trust/source/anchors/" >> temp.dockerfile
-                echo "RUN update-ca-trust" >> temp.dockerfile
-        fi
-        if [ $USEPROXY = "YES" ]; then
-                echo "#Proxy config" >> temp.dockerfile
-                echo "ENV HTTP_PROXY=$PROXYHTTPNAME" >> temp.dockerfile
-                echo "ENV HTTPS_PROXY=$PROXYHTTPSNAME" >> temp.dockerfile
-                echo "ENV http_proxy=$PROXYHTTPNAME" >> temp.dockerfile
-                echo "ENV https_proxy=$PROXYHTTPSNAME" >> temp.dockerfile
-                echo "ENV NO_PROXY=$NOPROXY" >> temp.dockerfile
-        fi
+    cp templates/Azure-header.dockerfile temp.dockerfile
+    files=$(shopt -s nullglob dotglob; echo $Dockerfolder/*)
+    if (( ${#files} )); then rm -rf $Dockerfolder/*.dockerfile; fi
+    if [ $USECERTS = "YES" ]; then
+      echo "#Certs configs" >> temp.dockerfile
+      echo "COPY src/packages/DockerEmbebed/certificates/$CERTFILE /etc/pki/ca-trust/source/anchors/" >> temp.dockerfile
+      echo "RUN update-ca-trust" >> temp.dockerfile
+    fi
+    if [ $USEPROXY = "YES" ]; then
+      echo "#Proxy config" >> temp.dockerfile
+      echo "ENV HTTP_PROXY=$PROXYHTTPNAME" >> temp.dockerfile
+      echo "ENV HTTPS_PROXY=$PROXYHTTPSNAME" >> temp.dockerfile
+      echo "ENV http_proxy=$PROXYHTTPNAME" >> temp.dockerfile
+      echo "ENV https_proxy=$PROXYHTTPSNAME" >> temp.dockerfile
+      echo "ENV NO_PROXY=$NOPROXY" >> temp.dockerfile
+    fi
     cat templates/Azure-template.dockerfile >> temp.dockerfile
     #
     echo "#/bin/bash" > src/avamar/post_install.sh
@@ -93,9 +95,7 @@ function prebuild {
       echo "echo Crontab install" > src/avamar/post_install.sh
       echo "echo '00 09 * * 1-5 /$INSTALLDIR/etc/scripts/backup-$DOCKERTYPE.sh' >> /var/spool/cron/root" >> src/avamar/post_install.sh
     fi
-    ##if [ $DOCKERTYPE != "keyvault" ]; then
         cat templates/Azure-template-$DOCKERTYPE.dockerfile >> temp.dockerfile
-    ##fi
     if [ $MOUNTTYPE = "ddboostfs" ]; then
         # Ddboostfs & Lockbox
           echo "read -n 1 -r -s -p $'Creating lockbox file, press enter to continue...\n'" >> src/avamar/post_install.sh
