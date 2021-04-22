@@ -41,6 +41,9 @@ EXPOSE 27001
 EXPOSE 29000
 EXPOSE 30101
 EXPOSE 30102
+# Copy  backup script
+COPY src/avamar/backup-cvision.sh /dockerclient/etc/scripts
+RUN chmod 755 /dockerclient/etc/scripts/backup-cvision.sh
 # Copy DDBoostFS
 COPY src/packages/DockerEmbebed/ddboostfs/DDBoostFS*.rpm /tmp
 # Install DDBoostFS

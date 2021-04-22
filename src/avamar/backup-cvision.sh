@@ -53,14 +53,14 @@ if [ -f ${ConfigDir}/swoconfig ]; then rm -rf ${ConfigDir}/swoconfig; fi
 echo
 echo "*********************************** SEARCHING cloud resources **************************************"
 echo
-az resource list --resource-group $RESOURCEGROUP --resource-type Microsoft.CognitiveServices/accounts --query "[].{name:name}" -o tsv | grep -v Prediction > ${ConfigDir}/swoconfig
+az resource list --resource-group $RESOURCEGROUP --resource-type $RESOURCES --query "[].{name:name}" -o tsv | grep -v Prediction > ${ConfigDir}/swoconfig
 cat ${ConfigDir}/swoconfig | while read linea
 do
         set -a $linea " "
 
         if [ "${1::1}" != "#" ] ; then
-                key=$(az cognitiveservices account keys list --name $1 --resource-group AutoProxyRG | jq -r '.key1')
-                location=$(az resource show --resource-group $RESOURCEGROUP --resource-type Microsoft.CognitiveServices/accounts --name $1 | jq .location | sed 's/"//g')
+                key=$(az cognitiveservices account keys list --name $1 --resource-group $RESOURCEGROUP | jq -r '.key1')
+                location=$(az resource show --resource-group $RESOURCEGROUP --resource-type $RESOURCES --name $1 | jq .location | sed 's/"//g')
                 projectids=$(curl "https://$location.api.cognitive.microsoft.com/customvision/v3.3/Training/projects" -H "Training-key: $key" | jq '.' | grep id | awk '{print $2}' | sed 's/"//g' | sed 's/,//g')
                 ERROR=0
                 for projectid in ${projectids[@]}; do
