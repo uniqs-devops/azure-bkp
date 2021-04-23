@@ -1,13 +1,13 @@
 {
   "cloudProvider": "azure",
-  "dockerType": "cvision",
-  "dockerTypeName": "CV",
-  "keyVaultName": "keyvaultautoproxyrg03",
-  "tenantId": "054bb9ef-86b1-4f4e-a843-deb19d532c11",
+  "dockerType": "mariadb",
+  "dockerTypeName": "MDB",
+  "keyVaultName": "cibd1weuakvglocolcrit001",
+  "tenantId": "35595a02-4d6d-44ac-99e1-f9ab4cd872db",
   "resourceGroup": "AutoProxyRG",
   "useTags": "NO",
   "useFQDN": "YES",
-  "useKeyVaultSecureAccess": "NO",
+  "useKeyVaultSecureAccess": "YES",
   "proxy": {
     "useProxy": "NO",
     "proxyHttpName": "http://proxy.threatpulse.net:8080",
@@ -18,46 +18,35 @@
     "useCerts": "NO",
     "certFile": "ca-proxy_threatpulse_net"
   },
-  "servicePrincipal": {
-    "useServicePrincipal": "NO",
-    "servicePrincipalClientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-    "servicePrincipalClientSecret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-  },
-  "EndPoints": {
-    "useEndPoints": "NO",
-    "EndPoint": "180.44.224.70"
-  },
   "avamar": {
-    "useAvamar": "YES",
+    "useAvamar": "NO",
     "avamarServerName": "cibp1weuaval001.shared.azure.scib.gs.corp",
-    "avamarClientPort": "28003",
-    "avamarDomain": "clients",
-    "installDir": "dockerclient",
-    "avamarVersion": "19.3"
+        "avamarDomain": "clients",
+        "installDir": "dockerclient",
+        "avamarVersion": "19.3"
   },
   "datadomain": {
     "datadomainServerName": "cibp1weuaval003.shared.azure.scib.gs.corp",
-    "mountType": "ddboostfs",
-    "RootBackupDir": "Backup"
+        "mountType": "local",
+        "RootBackupDir": "Backup"
   },
   "ddboosfs": {
-    "ddboostuser": "ddbost",
-    "storageUnit": "PaasBackup"
+    "storageUnit": "PassBackup"
   },
   "container": {
-    "containerName": "dockercv-01.pcalvo.local"
+    "containerName": "dockermdb-01.local"
   },
   "azureResources": [
     {
-      "type": "CV",
-      "resourceType": "Microsoft.CognitiveServices/accounts"
+      "type": "MDB",
+      "resourceType": "Microsoft.DBforMariaDB/servers"
     },
     {
-      "type": "CV",
+      "type": "MDB",
       "resourceType": null
     },
     {
-      "type": "CV",
+      "type": "MDB",
       "resourceType": null
     }
   ],
@@ -86,11 +75,11 @@
     "fixValues": [
     {
       "type": "user",
-      "value": "avamar_backup"
+      "value": "dps"
     },
     {
       "type": "port",
-      "value": "5432"
+      "value": "3306"
     },
     {
       "type": "database",
@@ -98,15 +87,11 @@
     },
     {
       "type": "task",
-      "value": "postgresql"
+      "value": "mariadb"
     },
     {
       "type": "secret",
-      "value": "postgresqlsecret"
+      "value": "mariadbsecret"
     }
-  ],
-"postgresql": {
-    "useDumpall": "YES"
+  ]
 }
-}
-

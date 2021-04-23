@@ -1,2 +1,2 @@
 #!/bin/sh
-FROM centos:latest
+FROM centos:ave-dd-az-v1

@@ -48,9 +48,6 @@ function setup {
     else
         sudo cp src/azure/azure-cli.repo /etc/yum.repos.d/azure-cli.repo; sudo yum install -y azure-cli
     fi
-    if [ -f src/images/centos.tar ] && [ ! `sudo docker images | grep centos | awk '{print $3}'` ] ; then
-            sudo docker load -i src/images/centos.tar  centos:latest
-   fi
 exit
 }
 
@@ -58,7 +55,17 @@ function prebuild {
     # Get environment
     environment
     # Docker container baseline
-    cp templates/Azure-header.dockerfile temp.dockerfile
+    echo "#!/bin/sh" > templates/Azure-header.dockerfile
+    for file in `cd src/images/;ls -1 *`
+    do
+	image=$(echo $file | awk -F'.' '{print $1}')
+	tag=$(echo $file | awk -F '.' '{print $2}')
+	if [ ! `sudo docker images | grep $tag | awk '{print $3}'` ]; then
+	  sudo docker load -i src/images/$file $image:$tag
+	fi
+	echo "FROM $image:$tag" >> templates/Azure-header.dockerfile
+    done
+    cp templates/Azure-header.dockerfile  temp.dockerfile
     files=$(shopt -s nullglob dotglob; echo $Dockerfolder/*)
     if (( ${#files} )); then rm -rf $Dockerfolder/*.dockerfile; fi
     if [ $USECERTS = "YES" ]; then
@@ -127,6 +134,7 @@ exit
 function build {
 # Docker
     environment
+    set -x
     sudo docker build -t $DockerfileName:1.0 -f $DockerfileName . --network host 
 exit
 }
