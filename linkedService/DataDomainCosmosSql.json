@@ -1,0 +1,17 @@
+{
+	"name": "DataDomainCosmosSql",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "FileServer",
+		"typeProperties": {
+			"host": "\\\\10.0.0.5\\datafactory",
+			"userId": "DDBoost",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIxOGIwZmEwYi1hY2ZmLTRkZTAtODIxOS1lYTAwYWNkOTA1Y2EiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "integrationRuntimewindows",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

@@ -1,0 +1,16 @@
+{
+	"name": "SourceDataset_l8o",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CosmosDb1sql",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "CosmosDbSqlApiCollection",
+		"schema": {},
+		"typeProperties": {
+			"collectionName": "Persons"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

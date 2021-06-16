@@ -1,0 +1,9 @@
+{
+	"name": "DFbackup",
+	"location": "westeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "13da6797-b976-4032-8549-988b257fdc3d",
+		"tenantId": "6299e5dd-5f24-42d9-b428-4aa9c7721fc4"
+	}
+}

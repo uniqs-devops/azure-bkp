@@ -1,0 +1,23 @@
+{
+	"name": "DestinationDataset_l8o",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DataDomainCosmosSql",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "FileServerLocation",
+				"fileName": {
+					"value": "cosmossql_@{formatDateTime(pipeline().TriggerTime,'yyyy-MM-dd-HH-mm')}",
+					"type": "Expression"
+				},
+				"folderPath": "sqlcosmosdb"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

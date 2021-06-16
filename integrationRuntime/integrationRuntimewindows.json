@@ -1,0 +1,6 @@
+{
+	"name": "integrationRuntimewindows",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}
